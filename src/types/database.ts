@@ -230,6 +230,17 @@ export interface Database {
         }
         Relationships: []
       }
+      card_verification: {
+        Row: {
+          verification_id: string
+          card_status: 'active' | 'revoked'
+          issued_at: string
+          revoked_at: string | null
+          member_number: string | null
+          category: MembershipCategoryT
+        }
+        Relationships: []
+      }
     }
     Functions: Record<string, never>
     Enums: {

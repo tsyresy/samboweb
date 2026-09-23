@@ -173,9 +173,33 @@ Fait :
     (`photo_url` remis à `null`) pour ne pas laisser de fausse photo sur le
     compte de production.
 
+- **Carte de membre numérique** (2026-09-23) : dimensions exactes 5,5cm ×
+  8,5cm (rendu en unités `cm` CSS pour une taille physique fidèle à
+  l'écran comme à l'export), en-tête avec petit logo SAMBO, photo, rôle
+  (fonction du bureau si assignée, sinon catégorie), numéro de membre, nom
+  et prénoms, puis QR code occupant ~50% de la carte avec le logo SAMBO en
+  petit au centre (`src/components/MembershipCardView.tsx`). Page
+  `/app/carte` avec téléchargement PNG haute résolution (`html-to-image`,
+  pixelRatio 3). QR encode une URL de vérification (`/verifier/:id`), pas
+  les infos personnelles brutes.
+  - `supabase/migrations/0003_membership_cards.sql` : trigger qui crée
+    automatiquement la carte quand un profil passe à `valide`, la révoque
+    quand il passe à `suspendu`/`refuse` ; vue publique
+    `public.card_verification` (statut de la carte + numéro + catégorie
+    uniquement — jamais le nom, la photo ou les coordonnées, conformément
+    au cahier des charges : l'identité complète reste réservée à un accès
+    authentifié) ; backfill pour les membres déjà validés avant cette
+    migration.
+  - Vérifié avec des données de test temporaires sur le compte admin
+    (nom, numéro, carte — tout nettoyé après coup) : dimensions exactes au
+    pixel près (207,86px × 321,25px @ 96dpi = 5,5cm × 8,5cm), mise en page
+    conforme, QR généré correctement.
+  - Bug trouvé et corrigé pendant le test : `Verify.tsx` traitait une
+    vraie erreur de requête (ex. table pas encore créée) exactement comme
+    un « carte introuvable », ce qui aurait caché un problème réel derrière
+    un message trompeur — état d'erreur séparé ajouté.
+
 À faire :
-- Carte de membre numérique : génération image/PDF + QR sécurisé, maintenant
-  que l'upload photo est en place et vérifié.
 - Journal d'audit : la table logue déjà les changements, mais aucune page
   admin ne l'affiche encore pour consulter l'historique des décisions de
   validation/suspension.

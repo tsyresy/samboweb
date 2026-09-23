@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 
 export function Dashboard() {
@@ -14,10 +15,20 @@ export function Dashboard() {
       </p>
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-sambo-200/70 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-sambo-700">Ma carte de membre</p>
-          <p className="mt-1 text-xs text-sambo-700/60">Disponible après validation.</p>
-        </div>
+        {profile?.status === 'valide' ? (
+          <Link
+            to="/app/carte"
+            className="rounded-2xl border border-sambo-200/70 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+          >
+            <p className="text-sm font-medium text-sambo-700">Ma carte de membre</p>
+            <p className="mt-1 text-xs text-sambo-700/60">Voir et télécharger →</p>
+          </Link>
+        ) : (
+          <div className="rounded-2xl border border-sambo-200/70 bg-white p-5 shadow-sm">
+            <p className="text-sm font-medium text-sambo-700">Ma carte de membre</p>
+            <p className="mt-1 text-xs text-sambo-700/60">Disponible après validation.</p>
+          </div>
+        )}
         <div className="rounded-2xl border border-sambo-200/70 bg-white p-5 shadow-sm">
           <p className="text-sm font-medium text-sambo-700">Mes adidy</p>
           <p className="mt-1 text-xs text-sambo-700/60">Aucune échéance pour le moment.</p>

@@ -7,6 +7,7 @@ import { AdminMembers } from '@/pages/app/admin/AdminMembers'
 import { ComingSoon } from '@/pages/app/ComingSoon'
 import { Dashboard } from '@/pages/app/Dashboard'
 import { Members } from '@/pages/app/Members'
+import { MembershipCard } from '@/pages/app/MembershipCard'
 import { PendingApproval } from '@/pages/app/PendingApproval'
 import { Profile } from '@/pages/app/Profile'
 import { Contact } from '@/pages/Contact'
@@ -17,6 +18,7 @@ import { News } from '@/pages/News'
 import { NewsDetail } from '@/pages/NewsDetail'
 import { Register } from '@/pages/Register'
 import { RegisterConfirmation } from '@/pages/RegisterConfirmation'
+import { Verify } from '@/pages/Verify'
 
 function App() {
   return (
@@ -31,6 +33,7 @@ function App() {
         <Route path="/inscription" element={<Register />} />
         <Route path="/inscription/confirmation" element={<RegisterConfirmation />} />
         <Route path="/connexion" element={<Login />} />
+        <Route path="/verifier/:verificationId" element={<Verify />} />
       </Route>
 
       <Route path="/app/en-attente" element={<PendingApproval />} />
@@ -45,6 +48,7 @@ function App() {
       >
         <Route index element={<Dashboard />} />
         <Route path="profil" element={<Profile />} />
+        <Route path="carte" element={<MembershipCard />} />
         <Route path="discussions" element={<ComingSoon title="Discussions" />} />
         <Route path="adidy" element={<ComingSoon title="Mes adidy" />} />
         <Route path="membres" element={<Members />} />

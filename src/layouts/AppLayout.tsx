@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext'
 const memberLinks = [
   { to: '/app', label: 'Tableau de bord', end: true },
   { to: '/app/profil', label: 'Mon profil' },
+  { to: '/app/carte', label: 'Ma carte de membre' },
   { to: '/app/discussions', label: 'Discussions' },
   { to: '/app/adidy', label: 'Mes adidy' },
   { to: '/app/membres', label: 'Annuaire' },

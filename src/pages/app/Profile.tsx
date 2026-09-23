@@ -1,4 +1,5 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { UNIVERSITY_ESTABLISHMENTS, STUDY_LEVELS } from '@/data/universities'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
@@ -173,10 +174,15 @@ export function Profile() {
         </div>
       </div>
 
-      <p className="mt-4 text-sm text-sambo-700/60">
-        Carte de membre téléchargeable : disponible une fois la génération de carte/QR mise en
-        place.
-      </p>
+      {profile.status === 'valide' ? (
+        <Link to="/app/carte" className="mt-4 inline-block text-sm font-medium text-sambo-700 hover:underline">
+          Voir ma carte de membre →
+        </Link>
+      ) : (
+        <p className="mt-4 text-sm text-sambo-700/60">
+          Carte de membre disponible une fois votre adhésion validée.
+        </p>
+      )}
 
       <div className="mt-6 flex items-center gap-4">
         {photoUrl ? (
