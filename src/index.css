@@ -43,6 +43,27 @@ body {
   animation: pop-in 0.2s ease-out;
 }
 
+@keyframes scroll-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-scroll-up {
+  animation: scroll-up var(--scroll-duration, 30s) linear infinite;
+}
+
+.scroll-wall {
+  mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+}
+
+.scroll-wall:hover .animate-scroll-up {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

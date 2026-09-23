@@ -39,7 +39,6 @@ export function Profile() {
     program: '',
     study_level: '',
     student_id: '',
-    show_phone_in_directory: false,
     show_email_in_directory: false,
   })
   const [emergency, setEmergency] = useState<EmergencyContact>({ contact_name: '', contact_phone: '' })
@@ -65,7 +64,6 @@ export function Profile() {
       program: profile.program ?? '',
       study_level: profile.study_level ?? '',
       student_id: profile.student_id ?? '',
-      show_phone_in_directory: profile.show_phone_in_directory,
       show_email_in_directory: profile.show_email_in_directory,
     })
     setPhotoUrl(profile.photo_url)
@@ -131,7 +129,6 @@ export function Profile() {
         program: form.still_studying ? form.program || null : null,
         study_level: form.still_studying ? form.study_level || null : null,
         student_id: form.still_studying ? form.student_id || null : null,
-        show_phone_in_directory: form.show_phone_in_directory,
         show_email_in_directory: form.show_email_in_directory,
       })
       .eq('id', profile.id)
@@ -403,17 +400,9 @@ export function Profile() {
         <fieldset className="space-y-3">
           <legend className="text-lg font-medium text-sambo-900">Visibilité dans l'annuaire</legend>
           <p className="text-sm text-sambo-800/70">
-            Choisissez les coordonnées que les autres membres validés peuvent voir dans
-            l'annuaire.
+            Votre téléphone est toujours visible des autres membres validés dans l'annuaire.
+            Vous pouvez choisir d'y afficher aussi votre email.
           </p>
-          <label className="flex items-center gap-2 text-sm text-sambo-800/80">
-            <input
-              type="checkbox"
-              checked={form.show_phone_in_directory}
-              onChange={(e) => setForm((f) => ({ ...f, show_phone_in_directory: e.target.checked }))}
-            />
-            Afficher mon téléphone
-          </label>
           <label className="flex items-center gap-2 text-sm text-sambo-800/80">
             <input
               type="checkbox"

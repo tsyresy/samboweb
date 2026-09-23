@@ -1,11 +1,13 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { PresenceProvider } from '@/context/PresenceContext'
 
 const memberLinks = [
   { to: '/app', label: 'Tableau de bord', end: true },
   { to: '/app/profil', label: 'Mon profil' },
   { to: '/app/carte', label: 'Ma carte de membre' },
   { to: '/app/discussions', label: 'Discussions' },
+  { to: '/app/chat', label: 'Chat' },
   { to: '/app/adidy', label: 'Mes adidy' },
   { to: '/app/membres', label: 'Annuaire' },
 ]
@@ -79,7 +81,9 @@ export function AppLayout() {
       </aside>
 
       <main className="flex-1 px-4 py-8 sm:px-8">
-        <Outlet />
+        <PresenceProvider>
+          <Outlet />
+        </PresenceProvider>
       </main>
     </div>
   )

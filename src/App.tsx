@@ -6,6 +6,7 @@ import { About } from '@/pages/About'
 import { AdminContent } from '@/pages/app/admin/AdminContent'
 import { AdminDues } from '@/pages/app/admin/AdminDues'
 import { AdminMembers } from '@/pages/app/admin/AdminMembers'
+import { Chat } from '@/pages/app/Chat'
 import { Dashboard } from '@/pages/app/Dashboard'
 import { Discussions } from '@/pages/app/Discussions'
 import { Dues } from '@/pages/app/Dues'
@@ -53,6 +54,7 @@ function App() {
         <Route path="profil" element={<Profile />} />
         <Route path="carte" element={<MembershipCard />} />
         <Route path="discussions" element={<Discussions />} />
+        <Route path="chat" element={<Chat />} />
         <Route path="adidy" element={<Dues />} />
         <Route path="membres" element={<Members />} />
         <Route

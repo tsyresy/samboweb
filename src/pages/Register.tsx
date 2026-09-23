@@ -1,6 +1,7 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { UNIVERSITY_ESTABLISHMENTS, STUDY_LEVELS } from '@/data/universities'
+import { uploadSignedPhoto } from '@/lib/cloudinary'
 import { supabase } from '@/lib/supabase'
 import type { MembershipCategory } from '@/types'
 
@@ -65,6 +66,7 @@ export function Register() {
   const [stillStudying, setStillStudying] = useState(true)
   const [establishment, setEstablishment] = useState('')
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [birthDateDisplay, setBirthDateDisplay] = useState('')
@@ -97,7 +99,7 @@ export function Register() {
 
     const form = new FormData(e.currentTarget)
     setLoading(true)
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email: String(form.get('email')),
       password,
       options: {
@@ -122,18 +124,34 @@ export function Register() {
       },
     })
 
-    setLoading(false)
     if (signUpError) {
+      setLoading(false)
       setError(signUpError.message)
       return
     }
 
+    // Upload the photo now that signUp has established a real session
+    // (email confirmation is disabled, so this works immediately) —
+    // previously this was silently dropped, leaving new members with no
+    // photo until they re-uploaded it from their profile.
+    if (photoFile && signUpData.session) {
+      try {
+        const { secure_url } = await uploadSignedPhoto(photoFile)
+        await supabase.from('profiles').update({ photo_url: secure_url }).eq('user_id', signUpData.session.user.id)
+      } catch {
+        // Don't block registration success on a photo upload hiccup —
+        // the member can still add it from /app/profil.
+      }
+    }
+
+    setLoading(false)
     navigate('/inscription/confirmation')
   }
 
   function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
+    setPhotoFile(file)
     setPhotoPreview(URL.createObjectURL(file))
   }
 
@@ -438,7 +456,8 @@ export function Register() {
           <input id="photo" type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
 
           <p className="text-xs text-sambo-700/60">
-            L'envoi définitif de la photo vous sera demandé après validation de votre compte.
+            La photo est envoyée avec votre inscription. Vous pourrez la changer depuis votre
+            profil une fois connecté(e).
           </p>
         </fieldset>
 

@@ -382,6 +382,40 @@ Fait :
 - Exports (mentionnés dans le cahier des charges pour
   `/app/administration/adidy`) — pas encore construits.
 
+## Consolidation — 2026-09-24
+
+- **Photo à l'inscription** : la photo choisie sur `/inscription` était
+  ignorée (seule une prévisualisation locale était faite). Elle est
+  maintenant envoyée via l'upload signé Cloudinary juste après `signUp`
+  (qui ouvre une session, confirmation email désactivée) puis enregistrée
+  dans `profiles.photo_url`. Un échec d'envoi ne bloque pas l'inscription.
+- **Téléphone toujours visible dans l'annuaire** (migration `0007`) : la
+  vue `directory_profiles` expose `phone` sans condition ; la case
+  « Afficher mon téléphone » est retirée de `/app/profil` (l'email reste
+  optionnel). La colonne `show_phone_in_directory` reste en base, inutilisée.
+- **Onglet Chat** `/app/chat` (migration `0008`) : salon unique pour tous
+  les membres validés, table `chat_messages` diffusée en temps réel
+  (Realtime `postgres_changes`, soumis aux policies RLS). Bulles de tous
+  les membres avec pastille verte (en ligne) / grise (hors ligne) via
+  Realtime Presence — `PresenceProvider` monté dans `AppLayout`, donc
+  « en ligne » = connecté n'importe où dans l'espace membre. Un membre peut
+  supprimer ses messages, un admin peut les masquer. Bouton « Appel vidéo »
+  présent mais désactivé (prévu pour l'application mobile).
+- **Mur « Membres TSY NAHALOHA ADIDY »** (`UnpaidWall`), colonne de droite
+  de Discussions et Chat (en haut sur mobile) : défilement vertical infini,
+  pause au survol, statique si « réduire les animations » est activé.
+  La vue `unpaid_members` est redéfinie (migration `0008`) : compte chaque
+  mois échu (échéance ou 1er du mois ≤ aujourd'hui) ayant un montant > 0,
+  depuis le mois d'inscription du membre, sans ligne payée / exemptée /
+  en attente — même convention que l'écran admin où une ligne absente
+  s'affiche « Impayé ». Nouvelle colonne `unpaid_months` (nombre de mois,
+  jamais de montant).
+
+À faire :
+- Appliquer `0007` puis `0008` dans le SQL Editor Supabase.
+- Vérifier en conditions réelles : chat à deux comptes (temps réel +
+  pastilles), mur des impayés, inscription avec photo.
+
 ## Phase 5 — Paiements ⏳ (pas commencée)
 
 - Table `donations`.

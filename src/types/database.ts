@@ -332,6 +332,24 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['content_reports']['Insert']>
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          id: string
+          author_id: string
+          content: string
+          status: 'visible' | 'hidden'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          author_id: string
+          content: string
+          status?: 'visible' | 'hidden'
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['chat_messages']['Insert']>
+        Relationships: []
+      }
     }
     Views: {
       directory_profiles: {
@@ -380,6 +398,7 @@ export interface Database {
           nickname: string | null
           photo_url: string | null
           category: MembershipCategoryT
+          unpaid_months: number
         }
         Relationships: []
       }
