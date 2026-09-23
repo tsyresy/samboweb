@@ -33,6 +33,7 @@ export function Profile() {
     phone: '',
     phone_secondary: '',
     residence: '',
+    cin_number: '',
     still_studying: true,
     faculty: '',
     program: '',
@@ -58,6 +59,7 @@ export function Profile() {
       phone: profile.phone ?? '',
       phone_secondary: profile.phone_secondary ?? '',
       residence: profile.residence ?? '',
+      cin_number: profile.cin_number ?? '',
       still_studying: profile.still_studying,
       faculty: profile.faculty ?? '',
       program: profile.program ?? '',
@@ -123,6 +125,7 @@ export function Profile() {
         phone: form.phone,
         phone_secondary: form.phone_secondary || null,
         residence: form.residence,
+        cin_number: form.cin_number || null,
         still_studying: form.still_studying,
         faculty: form.still_studying ? form.faculty || null : null,
         program: form.still_studying ? form.program || null : null,
@@ -217,16 +220,29 @@ export function Profile() {
       <form onSubmit={handleSubmit} className="mt-8 space-y-6">
         <fieldset className="space-y-4">
           <legend className="text-lg font-medium text-sambo-900">Identité</legend>
-          <div>
-            <label className="block text-sm font-medium text-sambo-900" htmlFor="nickname">
-              Surnom / nom de guerre
-            </label>
-            <input
-              id="nickname"
-              value={form.nickname}
-              onChange={(e) => setForm((f) => ({ ...f, nickname: e.target.value }))}
-              className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
-            />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-sambo-900" htmlFor="nickname">
+                Surnom / nom de guerre
+              </label>
+              <input
+                id="nickname"
+                value={form.nickname}
+                onChange={(e) => setForm((f) => ({ ...f, nickname: e.target.value }))}
+                className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-sambo-900" htmlFor="cin_number">
+                Numéro CIN
+              </label>
+              <input
+                id="cin_number"
+                value={form.cin_number}
+                onChange={(e) => setForm((f) => ({ ...f, cin_number: e.target.value }))}
+                className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+              />
+            </div>
           </div>
         </fieldset>
 

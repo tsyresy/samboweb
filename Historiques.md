@@ -230,7 +230,21 @@ Fait :
     révoquée, introuvable) ; téléchargement PNG haute résolution
     fonctionnel.
 
+- **Champ « Numéro CIN »** ajouté à l'inscription (juste après Prénom(s))
+  et au profil, avec migration (`0006_cin_number.sql`, colonne
+  `profiles.cin_number` + mise à jour du trigger `handle_new_user`).
+  Ajouté aussi côté `/app/profil`, pas seulement à l'inscription, pour
+  qu'un membre puisse le corriger après coup — sinon c'était un champ
+  qu'on ne pouvait renseigner qu'une fois, sans jamais pouvoir le revoir
+  ni le corriger.
+- **Upload de photo à l'inscription rendu visible** : remplacé le simple
+  `<input type=file>` (peu visible, signalé par l'utilisateur) par une
+  grande zone cliquable avec icône appareil photo, qui bascule sur
+  l'aperçu de la photo une fois sélectionnée. Vérifié en vrai navigateur :
+  bascule icône → aperçu confirmée.
+
 À faire :
+- Appliquer `supabase/migrations/0006_cin_number.sql`.
 - Journal d'audit : la table logue déjà les changements, mais aucune page
   admin ne l'affiche encore pour consulter l'historique des décisions de
   validation/suspension.

@@ -41,6 +41,7 @@ export function Register() {
         data: {
           last_name: form.get('last_name'),
           first_names: form.get('first_names'),
+          cin_number: form.get('cin_number'),
           nickname: form.get('nickname') || null,
           birth_date: form.get('birth_date'),
           phone: form.get('phone'),
@@ -106,6 +107,7 @@ export function Register() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Nom" name="last_name" required />
             <Field label="Prénom(s)" name="first_names" required />
+            <Field label="Numéro CIN" name="cin_number" required />
             <Field label="Surnom / nom de guerre" name="nickname" />
             <Field label="Date de naissance" name="birth_date" type="date" required />
           </div>
@@ -225,16 +227,37 @@ export function Register() {
           <p className="text-sm text-sambo-800/70">
             Portrait de face récent, sans filtre ni accessoire masquant le visage.
           </p>
-          <div className="flex items-center gap-4">
-            {photoPreview && (
+
+          <label
+            htmlFor="photo"
+            className="flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-sambo-300 bg-sambo-50 px-6 py-8 text-center transition-colors hover:border-sambo-500 hover:bg-sambo-100"
+          >
+            {photoPreview ? (
               <img
                 src={photoPreview}
                 alt="Aperçu"
-                className="h-20 w-20 rounded-full border border-sambo-200 object-cover"
+                className="h-24 w-24 rounded-full border border-sambo-200 object-cover"
               />
+            ) : (
+              <svg
+                width="56"
+                height="56"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="text-sambo-500"
+              >
+                <path d="M4 8a1 1 0 0 1 1-1h2.5l1-1.5h7l1 1.5H19a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8Z" />
+                <circle cx="12" cy="13" r="3.5" />
+              </svg>
             )}
-            <input type="file" accept="image/*" onChange={handlePhotoChange} />
-          </div>
+            <span className="text-sm font-medium text-sambo-700">
+              {photoPreview ? 'Changer la photo' : 'Cliquez pour ajouter une photo'}
+            </span>
+          </label>
+          <input id="photo" type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
+
           <p className="text-xs text-sambo-700/60">
             L'envoi définitif de la photo vous sera demandé après validation de votre compte.
           </p>

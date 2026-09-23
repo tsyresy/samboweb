@@ -42,6 +42,7 @@ export interface Database {
           program: string | null
           study_level: string | null
           student_id: string | null
+          cin_number: string | null
           photo_url: string | null
           category: MembershipCategoryT
           status: ValidationStatusT
@@ -69,6 +70,7 @@ export interface Database {
           program?: string | null
           study_level?: string | null
           student_id?: string | null
+          cin_number?: string | null
           photo_url?: string | null
           category?: MembershipCategoryT
           status?: ValidationStatusT
