@@ -108,24 +108,28 @@ export function AdminDues() {
   ) {
     const existing = recordByProfile.get(profileId)
 
-    if (existing) {
-      const { error: updateError } = await supabase.from('dues_records').update(patch).eq('id', existing.id)
-      if (updateError) {
-        setError(updateError.message)
-        return
-      }
-    } else {
-      const { error: insertError } = await supabase.from('dues_records').insert({
+    // Upsert rather than a manual insert-vs-update branch: two fields on
+    // the same not-yet-existing row can be edited in quick succession
+    // (e.g. the status select, then the amount input's blur) before the
+    // first write's result has refreshed local state, so a plain insert
+    // for the second field would race and hit the (profile_id, year,
+    // month) unique constraint. Upsert makes "create if missing,
+    // otherwise update" atomic at the database level.
+    const { error: upsertError } = await supabase.from('dues_records').upsert(
+      {
+        id: existing?.id,
         profile_id: profileId,
         year,
         month,
         rule_id: ruleId,
         ...patch,
-      })
-      if (insertError) {
-        setError(insertError.message)
-        return
-      }
+      },
+      { onConflict: 'profile_id,year,month' },
+    )
+
+    if (upsertError) {
+      setError(upsertError.message)
+      return
     }
 
     await load()

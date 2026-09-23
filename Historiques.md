@@ -250,10 +250,22 @@ Fait :
   proprement (« Montant non défini », statut par défaut) quand la
   migration n'est pas encore appliquée, plutôt que de planter.
 
+- **Migration appliquée et cycle complet vérifié en conditions réelles**
+  (2026-09-23) : montant du mois défini, un membre marqué payé (avec
+  montant), un autre laissé impayé → la vue `unpaid_members` affiche
+  correctement ce dernier, nom et surnom seulement, aucun montant. Données
+  de test nettoyées après coup (système financier réel, pas question d'y
+  laisser de fausses transactions).
+  - **Vrai bug de concurrence trouvé et corrigé pendant ce test** : éditer
+    coup sur coup deux champs d'une ligne qui n'existait pas encore
+    (statut via le menu, puis montant au blur) déclenchait deux `insert`
+    avant que le premier n'ait eu le temps de rafraîchir l'état local →
+    conflit sur la contrainte unique `(profile_id, year, month)` (erreur
+    409). Remplacé par un `upsert` (`onConflict: profile_id,year,month`),
+    qui rend l'opération « créer si absent, sinon mettre à jour »
+    atomique côté base plutôt que gérée en deux temps côté client.
+
 À faire :
-- Appliquer `supabase/migrations/0004_adidy.sql` (Dashboard → SQL Editor
-  → Run) puis revérifier en conditions réelles (comme pour les
-  migrations précédentes).
 - Exports (mentionnés dans le cahier des charges pour
   `/app/administration/adidy`) — pas encore construits.
 
