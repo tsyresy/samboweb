@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { UNIVERSITY_ESTABLISHMENTS, STUDY_LEVELS } from '@/data/universities'
 import { supabase } from '@/lib/supabase'
@@ -70,6 +70,7 @@ export function Register() {
   const [birthDateDisplay, setBirthDateDisplay] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const nativeDateRef = useRef<HTMLInputElement>(null)
 
   const mentions = UNIVERSITY_ESTABLISHMENTS.find((e) => e.name === establishment)?.mentions ?? []
   const strength = getPasswordStrength(password)
@@ -175,16 +176,52 @@ export function Register() {
               <label htmlFor="birth_date" className="block text-sm font-medium text-sambo-900">
                 Date de naissance
               </label>
-              <input
-                id="birth_date"
-                inputMode="numeric"
-                placeholder="jj/mm/aaaa"
-                required
-                value={birthDateDisplay}
-                onChange={(e) => setBirthDateDisplay(formatDateInput(e.target.value))}
-                maxLength={10}
-                className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
-              />
+              <div className="relative mt-1">
+                <input
+                  id="birth_date"
+                  inputMode="numeric"
+                  placeholder="jj/mm/aaaa"
+                  required
+                  value={birthDateDisplay}
+                  onChange={(e) => setBirthDateDisplay(formatDateInput(e.target.value))}
+                  maxLength={10}
+                  className="w-full rounded-xl border border-sambo-200 py-2 pl-3 pr-10 text-sm focus:border-sambo-500 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  aria-label="Choisir dans le calendrier"
+                  onClick={() => {
+                    const el = nativeDateRef.current
+                    if (!el) return
+                    if (typeof el.showPicker === 'function') el.showPicker()
+                    else el.focus()
+                  }}
+                  className="absolute inset-y-0 right-0 flex w-9 items-center justify-center text-sambo-500 hover:text-sambo-700"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <rect x="4" y="5.5" width="16" height="15" rx="2" />
+                    <path strokeLinecap="round" d="M8 3.5v4M16 3.5v4M4 10h16" />
+                  </svg>
+                </button>
+                {/* Native picker, invisible but functional — showPicker() needs
+                    the element rendered (not display:none), so it's shrunk to
+                    nothing rather than hidden. Only used for its calendar UI;
+                    the visible field above stays the source of truth for
+                    display/typing in jj/mm/aaaa. */}
+                <input
+                  ref={nativeDateRef}
+                  type="date"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  className="absolute h-0 w-0 opacity-0"
+                  onChange={(e) => {
+                    const iso = e.target.value
+                    if (!iso) return
+                    const [y, m, d] = iso.split('-')
+                    setBirthDateDisplay(`${d}/${m}/${y}`)
+                  }}
+                />
+              </div>
             </div>
           </div>
         </fieldset>

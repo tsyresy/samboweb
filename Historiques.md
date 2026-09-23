@@ -265,6 +265,19 @@ Fait :
   avant la soumission. Testé en vrai navigateur avec un vrai compte :
   saisie « 15032001 » → affichage « 15/03/2001 » → enregistré en base
   comme `2001-03-15`. Compte de test supprimé après vérification.
+  - **Sélecteur calendrier restauré** juste après (l'utilisateur a
+    remarqué à raison que le passage au champ texte l'avait fait
+    disparaître) : icône calendrier ajoutée dans le champ, qui ouvre le
+    picker natif du navigateur (`showPicker()`, avec repli sur un simple
+    focus si le navigateur ne le supporte pas) ; la date choisie se
+    synchronise vers l'affichage jj/mm/aaaa. Le champ texte reste la
+    source de vérité pour l'affichage/la saisie clavier, le picker natif
+    n'étant utilisé que pour son interface calendrier. Vérifié en vrai
+    navigateur (saisie clavier + sélection simulée via le picker natif,
+    deux dates différentes) — un premier test montrait un résultat vide
+    mais s'est avéré être un artefact du test lui-même (mutation directe
+    du DOM contournant l'état React, provoquant un bail-out silencieux),
+    pas un vrai bug ; confirmé propre une fois le test corrigé.
 
 À faire :
 - Appliquer `supabase/migrations/0006_cin_number.sql`.
