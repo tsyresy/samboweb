@@ -11,6 +11,8 @@ import { Contact } from '@/pages/Contact'
 import { Donate } from '@/pages/Donate'
 import { Home } from '@/pages/Home'
 import { Login } from '@/pages/Login'
+import { News } from '@/pages/News'
+import { NewsDetail } from '@/pages/NewsDetail'
 import { Register } from '@/pages/Register'
 import { RegisterConfirmation } from '@/pages/RegisterConfirmation'
 
@@ -20,6 +22,8 @@ function App() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/a-propos" element={<About />} />
+        <Route path="/actualites" element={<News />} />
+        <Route path="/actualites/:slug" element={<NewsDetail />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/don" element={<Donate />} />
         <Route path="/inscription" element={<Register />} />

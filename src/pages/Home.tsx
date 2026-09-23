@@ -1,32 +1,69 @@
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { NEWS_POSTS } from '@/data/news'
+import { NewsCard } from '@/components/NewsCard'
+
+const HERO_VIDEO_URL = 'https://res.cloudinary.com/j9i1lkuc/video/upload/v1790171703/animation_Sambo.mp4'
+
+function HeroVideoBackground() {
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    // Respect reduced-motion: leave the video paused on its first frame
+    // instead of looping it.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      video.pause()
+    }
+  }, [])
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <video
+        ref={videoRef}
+        src={HERO_VIDEO_URL}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        className="h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-sambo-950/70 via-sambo-950/60 to-sambo-50" />
+    </div>
+  )
+}
 
 export function Home() {
   return (
     <div>
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28">
-        <div className="mx-auto max-w-2xl text-center">
+      <section className="relative overflow-hidden px-4 py-20 sm:px-6 sm:py-28">
+        <HeroVideoBackground />
+        <div className="relative mx-auto max-w-2xl text-center">
           <img
             src="/sambo-logo.png"
             alt="SAMBO"
             className="mx-auto mb-6 h-20 w-20 rounded-full object-cover shadow-lg"
           />
-          <h1 className="text-4xl font-semibold tracking-tight text-sambo-950 sm:text-5xl">
+          <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
             L'association étudiante SAMBO
           </h1>
-          <p className="mt-4 text-lg text-sambo-800/80">
+          <p className="mt-4 text-lg text-sambo-100/90">
             Une communauté d'étudiants unis autour de projets, d'entraide et de solidarité.
             Découvrez notre histoire, nos réalisations et rejoignez-nous.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/inscription"
-              className="rounded-full bg-sambo-700 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-sambo-800"
+              className="rounded-full bg-white px-6 py-3 text-sm font-medium text-sambo-900 transition-colors hover:bg-sambo-100"
             >
               Rejoindre SAMBO
             </Link>
             <Link
               to="/don"
-              className="rounded-full border border-sambo-300 bg-white px-6 py-3 text-sm font-medium text-sambo-900 transition-colors hover:bg-sambo-100"
+              className="rounded-full border border-white/50 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10"
             >
               Faire un don
             </Link>
@@ -53,19 +90,23 @@ export function Home() {
 
       <section className="py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <h2 className="text-2xl font-semibold text-sambo-950">Actualités récentes</h2>
-          <p className="mt-2 text-sm text-sambo-700/70">
-            Les dernières nouvelles de l'association arriveront bientôt ici.
-          </p>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-semibold text-sambo-950">Actualités et réalisations</h2>
+              <p className="mt-2 text-sm text-sambo-700/70">
+                Ce que SAMBO fait pour ses membres et sa communauté.
+              </p>
+            </div>
+            <Link
+              to="/actualites"
+              className="text-sm font-medium text-sambo-700 hover:underline"
+            >
+              Voir toutes les actualités →
+            </Link>
+          </div>
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="rounded-2xl border border-sambo-200/70 bg-white p-5 shadow-sm"
-              >
-                <div className="mb-3 h-32 w-full rounded-xl bg-sambo-100" />
-                <p className="text-sm text-sambo-700/60">Actualité à venir</p>
-              </div>
+            {NEWS_POSTS.slice(0, 3).map((post) => (
+              <NewsCard key={post.slug} post={post} />
             ))}
           </div>
         </div>

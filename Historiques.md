@@ -26,6 +26,23 @@ chaque étape significative.
   publique Supabase et le cloud name / preset Cloudinary.
 - Vérifié : `npm run build`, `tsc -b` et rendu dans un vrai navigateur
   (Playwright headless, 0 erreur console) sur toutes les pages publiques.
+- **Actualités et réalisations avec du vrai contenu** (2026-09-23) :
+  `src/data/news.ts` reprend les 6 posts déjà publiés par l'association
+  (`docs/Images and texte for actus et exploit.txt`, textes récupérés
+  directement depuis Cloudinary) — accueil (3 mis en avant, ceux avec le
+  plus d'impact factuel : Marovoay, tournoi FI.ZA.MA.MI, soutien aux
+  étudiants), page `/actualites` (liste complète des 6) et
+  `/actualites/:slug` (détail avec galerie photo). Objectif : crédibilité
+  immédiate sans attendre la table `news` (Phase 3) ni un éditeur admin.
+  Note : je n'avais pas les vraies dates de publication de ces posts — je
+  n'en ai pas inventé, l'ordre affiché est un choix éditorial (les
+  réalisations les plus parlantes en premier), pas un tri chronologique.
+  Quand la table `news` existera, prévoir un vrai champ date.
+- **Vidéo d'animation SAMBO en fond du hero** (accueil) : lecture en boucle,
+  muette, autoplay, `object-cover`. Superposition dégradée pour garder le
+  texte lisible. Respecte `prefers-reduced-motion` (vidéo mise en pause sur
+  sa première image pour les visiteurs concernés). Vérifié en vrai
+  navigateur, desktop et mobile.
 
 ## Phase 2 — Membres 🚧 (en cours)
 
@@ -95,6 +112,20 @@ Fait :
      le suivre comme un booléen mis à jour de façon asynchrone. Revérifié 3
      fois de suite en dev et 3 fois en `vite preview` (prod) : plus jamais
      de redirection parasite.
+- **Premier commit poussé sur GitHub** : `git@github.com:tsyresy/samboweb.git`,
+  branche `main`.
+- **Confirmation email désactivée** (Supabase Dashboard → Authentication →
+  Providers → Email → « Confirm email » décoché, fait manuellement le
+  2026-09-23) : chaque inscription déclenchait l'envoi d'un email de
+  confirmation, ce qui a vite cogné le rate limit très bas du service email
+  intégré de Supabase (« email rate limit exceeded », erreur 429 rencontrée
+  en test puis par l'utilisateur en conditions réelles). Décision cohérente
+  avec le cahier des charges : c'est la validation par un administrateur qui
+  fait foi, pas un lien reçu par email. Revérifié après coup : inscription
+  de bout en bout sans erreur, session auto-établie immédiatement après
+  `signUp` (comportement normal quand la confirmation est désactivée), et
+  la ligne `profiles` bien créée par le trigger avec toutes les valeurs du
+  formulaire et `status = en_attente`.
 
 À faire :
 - Page `/app/profil` : lecture/édition du profil, visibilité annuaire,
