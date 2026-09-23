@@ -254,6 +254,17 @@ Fait :
   validation de longueur déjà en place). Aucune migration nécessaire.
   Vérifié en vrai navigateur : les 4 états (faible, fort, désaccord,
   accord) rendent correctement.
+- **Format jj/mm/aaaa forcé pour la date de naissance** (2026-09-24) : le
+  `<input type="date">` natif ne peut pas être forcé dans un format précis
+  — Chrome ignore le `lang="fr"` de la page et suit toujours la locale
+  du système/navigateur (confirmé : affichait « mm/dd/yyyy » malgré
+  `<html lang="fr">`). Remplacé par un champ texte avec masque : les
+  barres obliques s'insèrent automatiquement pendant la saisie des
+  chiffres, converti en ISO (`yyyy-mm-dd`) côté client avant l'envoi (seul
+  format non ambigu pour Postgres). Date invalide (ex. 31/02) rejetée
+  avant la soumission. Testé en vrai navigateur avec un vrai compte :
+  saisie « 15032001 » → affichage « 15/03/2001 » → enregistré en base
+  comme `2001-03-15`. Compte de test supprimé après vérification.
 
 À faire :
 - Appliquer `supabase/migrations/0006_cin_number.sql`.

@@ -31,6 +31,35 @@ function getPasswordStrength(password: string) {
   return { score, ...STRENGTH_LEVELS[Math.min(score, STRENGTH_LEVELS.length - 1)] }
 }
 
+/** As the user types digits, auto-insert the jj/mm/aaaa slashes. Native
+ *  <input type="date"> can't be forced into this display format — Chrome
+ *  ignores the page's `lang` and always follows the OS/browser locale
+ *  (confirmed showing "mm/dd/yyyy" even with <html lang="fr">) — so this
+ *  is a plain masked text input instead. */
+function formatDateInput(raw: string): string {
+  const digits = raw.replace(/\D/g, '').slice(0, 8)
+  if (digits.length > 4) return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`
+  if (digits.length > 2) return `${digits.slice(0, 2)}/${digits.slice(2)}`
+  return digits
+}
+
+/** Validates a jj/mm/aaaa string and converts it to the ISO (yyyy-mm-dd)
+ *  format Postgres needs — ISO is the only format that's unambiguous
+ *  regardless of the database's DateStyle setting. Returns null if the
+ *  date is incomplete or not a real calendar date (e.g. 31/02). */
+function displayDateToIso(display: string): string | null {
+  const match = display.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+  if (!match) return null
+  const [, dd, mm, yyyy] = match
+  const day = Number(dd)
+  const month = Number(mm)
+  const year = Number(yyyy)
+  if (month < 1 || month > 12) return null
+  const daysInMonth = new Date(year, month, 0).getDate()
+  if (day < 1 || day > daysInMonth) return null
+  return `${yyyy}-${mm}-${dd}`
+}
+
 export function Register() {
   const navigate = useNavigate()
   const [stillStudying, setStillStudying] = useState(true)
@@ -38,6 +67,7 @@ export function Register() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [birthDateDisplay, setBirthDateDisplay] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -58,6 +88,12 @@ export function Register() {
       return
     }
 
+    const birthDateIso = displayDateToIso(birthDateDisplay)
+    if (!birthDateIso) {
+      setError('Date de naissance invalide. Format attendu : jj/mm/aaaa.')
+      return
+    }
+
     const form = new FormData(e.currentTarget)
     setLoading(true)
     const { error: signUpError } = await supabase.auth.signUp({
@@ -69,7 +105,7 @@ export function Register() {
           first_names: form.get('first_names'),
           cin_number: form.get('cin_number'),
           nickname: form.get('nickname') || null,
-          birth_date: form.get('birth_date'),
+          birth_date: birthDateIso,
           phone: form.get('phone'),
           phone_secondary: form.get('phone_secondary') || null,
           residence: form.get('residence'),
@@ -135,7 +171,21 @@ export function Register() {
             <Field label="Prénom(s)" name="first_names" required />
             <Field label="Numéro CIN" name="cin_number" required />
             <Field label="Surnom / nom de guerre" name="nickname" />
-            <Field label="Date de naissance" name="birth_date" type="date" required />
+            <div>
+              <label htmlFor="birth_date" className="block text-sm font-medium text-sambo-900">
+                Date de naissance
+              </label>
+              <input
+                id="birth_date"
+                inputMode="numeric"
+                placeholder="jj/mm/aaaa"
+                required
+                value={birthDateDisplay}
+                onChange={(e) => setBirthDateDisplay(formatDateInput(e.target.value))}
+                maxLength={10}
+                className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+              />
+            </div>
           </div>
         </fieldset>
 
