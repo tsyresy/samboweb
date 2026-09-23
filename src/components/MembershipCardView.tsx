@@ -82,11 +82,11 @@ export const MembershipCardView = forwardRef<HTMLDivElement, MembershipCardViewP
           )}
         </div>
 
-        {/* Logo + member id */}
-        <div className="absolute flex flex-col items-center" style={{ left: '3.35cm', top: '0.3cm', width: '1.8cm' }}>
-          <img src="/sambo-logo.png" alt="SAMBO" className="h-[1.15cm] w-[1.15cm] rounded-full object-cover" />
-          <p className="mt-[0.15cm] whitespace-nowrap text-[0.19cm] font-medium text-sambo-700/70">
-            ID:{profile.member_number ?? 'xxxxxx'}
+        {/* Logo + member number */}
+        <div className="absolute flex flex-col items-center" style={{ left: '3.2cm', top: '0.25cm', width: '2.1cm' }}>
+          <img src="/sambo-logo.png" alt="SAMBO" className="h-[1.45cm] w-[1.45cm] rounded-full object-cover" />
+          <p className="mt-[0.15cm] whitespace-nowrap text-[0.2cm] font-medium text-sambo-700/70">
+            {profile.member_number ?? '—'}
           </p>
         </div>
 
