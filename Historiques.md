@@ -242,6 +242,18 @@ Fait :
   grande zone cliquable avec icône appareil photo, qui bascule sur
   l'aperçu de la photo une fois sélectionnée. Vérifié en vrai navigateur :
   bascule icône → aperçu confirmée.
+- **Indicateur de puissance du mot de passe + confirmation en temps réel**
+  (2026-09-24) : sous le champ mot de passe, une barre à 5 segments
+  s'anime (couleur + remplissage) selon un score (longueur, majuscules +
+  minuscules, chiffres, caractères spéciaux), avec un libellé qui
+  s'anime en fondu à chaque changement de palier (Trop court → Faible →
+  Moyen → Correct → Fort → Très fort). Un champ « Confirmer le mot de
+  passe » compare en direct avec le premier champ et affiche une coche
+  verte ou une croix rouge animée. La soumission est bloquée côté client
+  si les deux mots de passe ne correspondent pas (en plus de la
+  validation de longueur déjà en place). Aucune migration nécessaire.
+  Vérifié en vrai navigateur : les 4 états (faible, fort, désaccord,
+  accord) rendent correctement.
 
 À faire :
 - Appliquer `supabase/migrations/0006_cin_number.sql`.

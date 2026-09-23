@@ -12,27 +12,53 @@ const CATEGORIES: { value: MembershipCategory; label: string }[] = [
   { value: 'sponsor', label: 'Sponsor' },
 ]
 
+const STRENGTH_LEVELS = [
+  { label: 'Trop court', barColor: 'bg-red-500', textColor: 'text-red-600' },
+  { label: 'Faible', barColor: 'bg-red-500', textColor: 'text-red-600' },
+  { label: 'Moyen', barColor: 'bg-gold-500', textColor: 'text-gold-600' },
+  { label: 'Correct', barColor: 'bg-gold-400', textColor: 'text-gold-600' },
+  { label: 'Fort', barColor: 'bg-sambo-500', textColor: 'text-sambo-700' },
+  { label: 'Très fort', barColor: 'bg-sambo-700', textColor: 'text-sambo-700' },
+]
+
+function getPasswordStrength(password: string) {
+  let score = 0
+  if (password.length >= 8) score++
+  if (password.length >= 12) score++
+  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++
+  if (/\d/.test(password)) score++
+  if (/[^A-Za-z0-9]/.test(password)) score++
+  return { score, ...STRENGTH_LEVELS[Math.min(score, STRENGTH_LEVELS.length - 1)] }
+}
+
 export function Register() {
   const navigate = useNavigate()
   const [stillStudying, setStillStudying] = useState(true)
   const [establishment, setEstablishment] = useState('')
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [password, setPassword] = useState('')
+  const [passwordConfirm, setPasswordConfirm] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const mentions = UNIVERSITY_ESTABLISHMENTS.find((e) => e.name === establishment)?.mentions ?? []
+  const strength = getPasswordStrength(password)
+  const passwordsMatch = passwordConfirm.length > 0 && password === passwordConfirm
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError('')
 
-    const form = new FormData(e.currentTarget)
-    const password = String(form.get('password'))
     if (password.length < 8) {
       setError('Le mot de passe doit contenir au moins 8 caractères.')
       return
     }
+    if (password !== passwordConfirm) {
+      setError('Les deux mots de passe ne correspondent pas.')
+      return
+    }
 
+    const form = new FormData(e.currentTarget)
     setLoading(true)
     const { error: signUpError } = await supabase.auth.signUp({
       email: String(form.get('email')),
@@ -124,7 +150,73 @@ export function Register() {
 
         <fieldset className="space-y-4">
           <legend className="text-lg font-medium text-sambo-900">Accès</legend>
-          <Field label="Mot de passe (8 caractères minimum)" name="password" type="password" required />
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-sambo-900">
+              Mot de passe (8 caractères minimum)
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+            />
+
+            {password && (
+              <div className="mt-2">
+                <div className="flex gap-1">
+                  {STRENGTH_LEVELS.slice(1).map((level, i) => (
+                    <div
+                      key={level.label}
+                      className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
+                        i < strength.score ? strength.barColor : 'bg-sambo-100'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <p key={strength.label} className={`animate-pop-in mt-1 text-xs ${strength.textColor}`}>
+                  {strength.label}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="password_confirm" className="block text-sm font-medium text-sambo-900">
+              Confirmer le mot de passe
+            </label>
+            <input
+              id="password_confirm"
+              type="password"
+              required
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+            />
+
+            {passwordConfirm && (
+              <p
+                key={passwordsMatch ? 'match' : 'mismatch'}
+                className={`animate-pop-in mt-1 flex items-center gap-1.5 text-xs ${
+                  passwordsMatch ? 'text-sambo-700' : 'text-red-600'
+                }`}
+              >
+                {passwordsMatch ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 6l12 12M18 6L6 18" />
+                  </svg>
+                )}
+                {passwordsMatch ? 'Les mots de passe correspondent' : 'Les mots de passe ne correspondent pas'}
+              </p>
+            )}
+          </div>
         </fieldset>
 
         <fieldset className="space-y-4">
