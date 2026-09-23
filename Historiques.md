@@ -411,10 +411,39 @@ Fait :
   s'affiche « Impayé ». Nouvelle colonne `unpaid_months` (nombre de mois,
   jamais de montant).
 
+- **Vérifié en conditions réelles** (Playwright, deux comptes de test
+  validés, desktop + mobile) : photo enregistrée dès l'inscription ;
+  messages reçus en < 1 s sans rechargement, suppression propagée,
+  historique conservé ; mur des impayés qui défile ; 0 erreur console.
+  - **Vrai bug trouvé : pastilles incohérentes.** `supabase.channel(topic)`
+    renvoie le canal *existant* tant que `removeChannel()` n'a pas été
+    acquitté par le serveur → un remontage rapide (StrictMode, aller-retour
+    entre onglets) récupérait un canal en cours de fermeture et perdait ses
+    écouteurs. Nouvel utilitaire `openChannel()` (`src/lib/realtime.ts`) qui
+    attend la fermeture précédente. Utilisé par la présence et le chat.
+  - **Fantômes « en ligne »** après fermeture/rechargement d'un onglet
+    (10 à 40 s, délai serveur) : la présence fait maintenant `untrack()` sur
+    `pagehide`. Limite restante : une coupure brutale (appli tuée, perte
+    réseau) garde le délai serveur (jusqu'à ~1 min).
+- **Impayés recalculés** (migration `0009`) : tout le monde apparaissait
+  avec « 1 mois » car 0008 partait du mois de création du compte sur le
+  site (tous créés en septembre). Nouvelle règle : année en cours = chaque
+  mois de janvier au mois actuel est dû (sauf montant explicitement à 0) ;
+  années précédentes = mois ayant une règle de montant > 0, plus tout mois
+  marqué « impayé » ; payé / exempté / en attente ne comptent pas. Testé
+  sur un Postgres embarqué (PGlite) avec cinq profils types.
+- **Menu mobile** de l'espace membre : la sidebar était masquée sous 640px
+  sans remplaçant (aucune navigation possible sur téléphone). Barre du
+  haut avec bouton menu + tiroir latéral (mêmes liens que la sidebar,
+  fermeture au changement de page, Échap ou clic sur le fond). Vérifié
+  sur 390px, sans débordement horizontal.
+
 À faire :
-- Appliquer `0007` puis `0008` dans le SQL Editor Supabase.
-- Vérifier en conditions réelles : chat à deux comptes (temps réel +
-  pastilles), mur des impayés, inscription avec photo.
+- Appliquer `0009` dans le SQL Editor Supabase.
+- Définir le montant de janvier 2026 (actuellement absent : le mois est
+  compté dû mais s'affiche « Montant non défini » dans `/app/adidy`).
+- Supprimer les comptes de test TESTCHAT Alpha / Bravo
+  (Authentication → Users).
 
 ## Phase 5 — Paiements ⏳ (pas commencée)
 
