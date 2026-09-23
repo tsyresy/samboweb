@@ -143,17 +143,36 @@ Fait :
   surnom, numéro) sur `public.directory_profiles`. Testé en vrai : montre
   bien uniquement les coordonnées que chaque membre a choisi de partager.
 
+- **Upload de photo de profil** : `supabase/functions/cloudinary-sign/index.ts`
+  (Edge Function Deno) signe un upload Cloudinary côté serveur — la clé
+  secrète Cloudinary ne quitte jamais le serveur, le navigateur envoie
+  ensuite le fichier directement à Cloudinary avec cette signature à usage
+  unique (dossier scopé par `user_id`, un membre ne peut pas signer un
+  upload dans le dossier d'un autre). Branché sur `/app/profil` (« Changer
+  ma photo »). `src/lib/cloudinary.ts` a la fonction `uploadSignedPhoto`.
+- **Journal d'audit** : `supabase/migrations/0002_audit_log_profile_changes.sql`
+  — trigger qui logue automatiquement dans `audit_logs` tout changement de
+  `status` / `category` / `access_level` / `member_number` sur un profil
+  (avant/après, avec l'auteur du changement).
+
 À faire :
-- Carte de membre numérique : génération image/PDF + QR sécurisé — nécessite
-  une Supabase Edge Function (les clés secrètes ne doivent jamais passer
-  côté client).
-- Upload photo de profil : Edge Function avec upload signé Cloudinary (accès
-  contrôlé), pas d'upload non signé pour les photos privées.
-- Journal d'audit (`audit_logs`) : la table et sa politique de lecture admin
-  existent déjà, mais rien n'écrit dedans pour l'instant. À ajouter (trigger
-  sur `profiles` qui logue les changements de statut/catégorie/accès) dans
-  une prochaine migration — non bloquant, mais utile pour la traçabilité des
-  décisions de validation/suspension.
+- **Bloquant — deux actions manuelles requises, comme pour la migration
+  initiale** (je ne peux toujours pas déployer moi-même : ni le CLI Supabase
+  ni les clés API dont je dispose ne permettent de pousser du code ou des
+  secrets vers le projet) :
+  1. Appliquer `supabase/migrations/0002_audit_log_profile_changes.sql` dans
+     Supabase Dashboard → SQL Editor → Run.
+  2. Déployer la fonction : Dashboard → Edge Functions → New function →
+     nommer `cloudinary-sign` → coller le contenu de
+     `supabase/functions/cloudinary-sign/index.ts` → Deploy. Puis, dans les
+     secrets de la fonction (Dashboard → Edge Functions → Secrets), ajouter
+     `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` et `CLOUDINARY_API_SECRET`
+     (les valeurs sont dans `docs/Supabase Sambo & Cloudinary.md`).
+- Carte de membre numérique : génération image/PDF + QR sécurisé, une fois
+  l'upload photo en place et vérifié.
+- Journal d'audit : la table logue déjà les changements, mais aucune page
+  admin ne l'affiche encore pour consulter l'historique des décisions de
+  validation/suspension.
 
 ## Phase 3 — Vie associative ⏳ (pas commencée)
 

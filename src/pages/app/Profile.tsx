@@ -1,7 +1,8 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { UNIVERSITY_ESTABLISHMENTS, STUDY_LEVELS } from '@/data/universities'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
+import { uploadSignedPhoto } from '@/lib/cloudinary'
 
 const CATEGORY_LABELS: Record<string, string> = {
   membre_standard: 'Membre standard',
@@ -44,6 +45,9 @@ export function Profile() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const [photoError, setPhotoError] = useState('')
 
   useEffect(() => {
     if (!profile) return
@@ -61,6 +65,7 @@ export function Profile() {
       show_phone_in_directory: profile.show_phone_in_directory,
       show_email_in_directory: profile.show_email_in_directory,
     })
+    setPhotoUrl(profile.photo_url)
 
     supabase
       .from('emergency_contacts')
@@ -78,6 +83,30 @@ export function Profile() {
   }
 
   const mentions = UNIVERSITY_ESTABLISHMENTS.find((e) => e.name === form.faculty)?.mentions ?? []
+
+  async function handlePhotoChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !profile) return
+
+    setUploadingPhoto(true)
+    setPhotoError('')
+
+    try {
+      const { secure_url } = await uploadSignedPhoto(file)
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ photo_url: secure_url })
+        .eq('id', profile.id)
+
+      if (updateError) throw new Error(updateError.message)
+      setPhotoUrl(secure_url)
+    } catch (err) {
+      setPhotoError(err instanceof Error ? err.message : "Échec de l'envoi de la photo.")
+    } finally {
+      setUploadingPhoto(false)
+      e.target.value = ''
+    }
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -148,6 +177,36 @@ export function Profile() {
         Carte de membre téléchargeable : disponible une fois la génération de carte/QR mise en
         place.
       </p>
+
+      <div className="mt-6 flex items-center gap-4">
+        {photoUrl ? (
+          <img src={photoUrl} alt="" className="h-20 w-20 rounded-full object-cover" />
+        ) : (
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-sambo-100 text-2xl font-semibold text-sambo-700">
+            {(profile.first_names ?? profile.email ?? '?').charAt(0)}
+          </div>
+        )}
+        <div>
+          <label
+            htmlFor="photo"
+            className="inline-block cursor-pointer rounded-lg border border-sambo-200 px-3 py-1.5 text-sm font-medium text-sambo-900 hover:bg-sambo-100"
+          >
+            {uploadingPhoto ? 'Envoi…' : 'Changer ma photo'}
+          </label>
+          <input
+            id="photo"
+            type="file"
+            accept="image/*"
+            disabled={uploadingPhoto}
+            onChange={handlePhotoChange}
+            className="hidden"
+          />
+          <p className="mt-1 text-xs text-sambo-700/60">
+            Portrait de face récent, sans filtre ni accessoire masquant le visage.
+          </p>
+          {photoError && <p className="mt-1 text-xs text-red-600">{photoError}</p>}
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-6">
         <fieldset className="space-y-4">
