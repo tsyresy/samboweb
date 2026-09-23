@@ -155,21 +155,27 @@ Fait :
   `status` / `category` / `access_level` / `member_number` sur un profil
   (avant/après, avec l'auteur du changement).
 
+- **Migration 0002 et fonction `cloudinary-sign` appliquées/déployées**
+  (2026-09-23) et vérifiées de bout en bout :
+  - Trigger d'audit testé avec un vrai changement de statut (en_attente →
+    valide) : ligne correctement créée dans `audit_logs` avec avant/après.
+  - Upload de photo testé en conditions réelles depuis `/app/profil` :
+    signature obtenue, upload Cloudinary réussi, `photo_url` mis à jour en
+    base, photo affichée à la fois sur `/app/profil` et dans l'annuaire
+    `/app/membres`.
+  - **Bug trouvé et corrigé au passage** : la première version de la
+    fonction bloquait silencieusement dans un vrai navigateur (CORS —
+    aucun header `Access-Control-Allow-Origin` sur la réponse au preflight
+    `OPTIONS`), invisible en testant seulement avec `curl` puisque `curl`
+    n'applique pas les règles CORS des navigateurs. Corrigé, redéployé par
+    l'utilisateur, revérifié avec succès.
+  - Photo de test nettoyée du compte admin réel après vérification
+    (`photo_url` remis à `null`) pour ne pas laisser de fausse photo sur le
+    compte de production.
+
 À faire :
-- **Bloquant — deux actions manuelles requises, comme pour la migration
-  initiale** (je ne peux toujours pas déployer moi-même : ni le CLI Supabase
-  ni les clés API dont je dispose ne permettent de pousser du code ou des
-  secrets vers le projet) :
-  1. Appliquer `supabase/migrations/0002_audit_log_profile_changes.sql` dans
-     Supabase Dashboard → SQL Editor → Run.
-  2. Déployer la fonction : Dashboard → Edge Functions → New function →
-     nommer `cloudinary-sign` → coller le contenu de
-     `supabase/functions/cloudinary-sign/index.ts` → Deploy. Puis, dans les
-     secrets de la fonction (Dashboard → Edge Functions → Secrets), ajouter
-     `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` et `CLOUDINARY_API_SECRET`
-     (les valeurs sont dans `docs/Supabase Sambo & Cloudinary.md`).
-- Carte de membre numérique : génération image/PDF + QR sécurisé, une fois
-  l'upload photo en place et vérifié.
+- Carte de membre numérique : génération image/PDF + QR sécurisé, maintenant
+  que l'upload photo est en place et vérifié.
 - Journal d'audit : la table logue déjà les changements, mais aucune page
   admin ne l'affiche encore pour consulter l'historique des décisions de
   validation/suspension.
