@@ -238,11 +238,14 @@ Fait :
 - Vérifié dans un vrai navigateur : dégradation propre (erreur affichée,
   pas de plantage) avant application de la migration ; annuaire avec
   filtre catégorie + fonction affichée confirmé avec de vraies données.
+- **Migration appliquée et cycle complet vérifié en conditions réelles**
+  (2026-09-23) : publication → commentaire → signalement (avec motif) →
+  masquage inline par l'admin (badge « Masqué » + bouton Réafficher) →
+  la file de modération affiche le signalement avec le contenu concerné
+  marqué « (déjà masqué) » et permet de le classer traité. Aucune erreur
+  à aucune étape. Données de test nettoyées après coup.
 
 À faire :
-- Appliquer `supabase/migrations/0005_discussions.sql` puis revérifier le
-  cycle complet (publier, commenter, signaler, modérer) en conditions
-  réelles.
 - Tableau de bord enrichi (aperçu des dernières discussions, activités à
   venir) — pas encore fait.
 
