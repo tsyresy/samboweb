@@ -16,6 +16,16 @@ const CLOUD_NAME = Deno.env.get('CLOUDINARY_CLOUD_NAME')!
 const API_KEY = Deno.env.get('CLOUDINARY_API_KEY')!
 const API_SECRET = Deno.env.get('CLOUDINARY_API_SECRET')!
 
+// Browsers send a CORS preflight (OPTIONS) before the real POST, and
+// expect these headers on every response, preflight included — without
+// them the browser blocks the request entirely before it even reaches
+// the "Unauthorized"/success logic below.
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+
 async function sha1(input: string): Promise<string> {
   const data = new TextEncoder().encode(input)
   const hashBuffer = await crypto.subtle.digest('SHA-1', data)
@@ -25,13 +35,23 @@ async function sha1(input: string): Promise<string> {
 }
 
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders })
+  }
+
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 })
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 
   const authHeader = req.headers.get('Authorization')
   if (!authHeader) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 
   const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
@@ -44,7 +64,10 @@ Deno.serve(async (req) => {
   } = await supabase.auth.getUser()
 
   if (error || !user) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 
   // Photos are scoped to the calling member's own user id — nobody can
@@ -56,6 +79,6 @@ Deno.serve(async (req) => {
 
   return new Response(
     JSON.stringify({ signature, timestamp, api_key: API_KEY, cloud_name: CLOUD_NAME, folder }),
-    { headers: { 'Content-Type': 'application/json' } },
+    { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
   )
 })
