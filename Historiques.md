@@ -127,10 +127,23 @@ Fait :
   la ligne `profiles` bien créée par le trigger avec toutes les valeurs du
   formulaire et `status = en_attente`.
 
+- **`/app/profil`** : lecture et édition du profil (surnom, téléphones,
+  résidence, études — masqué si « je n'étudie plus » —, contact d'urgence
+  en upsert sur `emergency_contacts`), plus deux cases à cocher pour choisir
+  ce qui est visible dans l'annuaire (téléphone / email). Catégorie, statut
+  et numéro de membre affichés en lecture seule (protégés côté DB de toute
+  façon par le trigger anti-élévation-de-privilèges). Section carte de
+  membre en placeholder tant que la génération QR n'existe pas. Bug
+  d'accessibilité trouvé et corrigé pendant le test : le champ résidence
+  n'avait ni `<label htmlFor>` ni `id` — juste un `<legend>` de fieldset, qui
+  ne labellise pas un input ; j'ai profité de la relecture pour corriger la
+  même chose sur mention/niveau d'étude/identifiant étudiant/contact
+  d'urgence.
+- **`/app/membres`** (annuaire) : recherche client-side (nom, prénom,
+  surnom, numéro) sur `public.directory_profiles`. Testé en vrai : montre
+  bien uniquement les coordonnées que chaque membre a choisi de partager.
+
 À faire :
-- Page `/app/profil` : lecture/édition du profil, visibilité annuaire,
-  téléchargement de la carte (dépend de la génération de carte/QR).
-- Page `/app/membres` (annuaire) : recherche sur `public.directory_profiles`.
 - Carte de membre numérique : génération image/PDF + QR sécurisé — nécessite
   une Supabase Edge Function (les clés secrètes ne doivent jamais passer
   côté client).

@@ -6,7 +6,9 @@ import { About } from '@/pages/About'
 import { AdminMembers } from '@/pages/app/admin/AdminMembers'
 import { ComingSoon } from '@/pages/app/ComingSoon'
 import { Dashboard } from '@/pages/app/Dashboard'
+import { Members } from '@/pages/app/Members'
 import { PendingApproval } from '@/pages/app/PendingApproval'
+import { Profile } from '@/pages/app/Profile'
 import { Contact } from '@/pages/Contact'
 import { Donate } from '@/pages/Donate'
 import { Home } from '@/pages/Home'
@@ -42,10 +44,10 @@ function App() {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="profil" element={<ComingSoon title="Mon profil" />} />
+        <Route path="profil" element={<Profile />} />
         <Route path="discussions" element={<ComingSoon title="Discussions" />} />
         <Route path="adidy" element={<ComingSoon title="Mes adidy" />} />
-        <Route path="membres" element={<ComingSoon title="Annuaire des membres" />} />
+        <Route path="membres" element={<Members />} />
         <Route
           path="administration/membres"
           element={
