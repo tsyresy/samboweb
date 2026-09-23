@@ -1,0 +1,51 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Env files (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Local notes containing live credentials
+docs/Supabase Sambo & Cloudinary.md
+docs/*secret*
+docs/*credential*
+docs/*Credential*
+
+# Key/cert material and service-account style secrets, wherever they end up
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*.json
+service-account*.json
+
+# Supabase CLI local state (can cache tokens/db state)
+supabase/.branches
+supabase/.temp
+
+# Deployment provider secrets
+.vercel
+.netlify
