@@ -198,6 +198,28 @@ Fait :
     vraie erreur de requête (ex. table pas encore créée) exactement comme
     un « carte introuvable », ce qui aurait caché un problème réel derrière
     un message trompeur — état d'erreur séparé ajouté.
+  - **Refonte du format et de la disposition (2026-09-24)**, consolidation
+    demandée par l'utilisateur : dimensions inversées en 8,5cm de large ×
+    5,5cm de haut (paysage), et disposition entièrement reprise pour
+    reproduire `Assets/reference carte membre.png` fournie par
+    l'utilisateur — couleurs exactes échantillonnées directement dans le
+    fichier de référence (rouge `#D02B30`, vert `#34A750`, gris des
+    encadrés `#B5B7B8`/`#F1F3F4`/`#E5E6E6`) : photo en haut à gauche, logo
+    + « ID:xxxxxx » au centre, encadré QR à droite (plus haut que
+    l'encadré photo, aligné sur le trait noir de séparation), ruban rouge
+    coin haut-droit / ruban vert coin bas-gauche en SVG, rôle/attribution
+    souligné en tirets sous la photo, trait noir de séparation, puis
+    « Nom: » / « Prenom: » soulignés en pointillés et un espace
+    « signature: » en bas à droite. Vérifié en vrai navigateur par export
+    PNG haute résolution et comparaison visuelle directe avec la
+    référence. Bug trouvé et corrigé pendant cette vérification : la ligne
+    « signature: » était positionnée par des marges empilées
+    (`margin-top` cumulés) qui la faisaient déborder de 0,02cm sous les
+    5,5cm de la carte et se faisaient donc couper silencieusement par
+    l'`overflow-hidden` — invisible sur la capture d'écran basse résolution
+    du premier test, repéré seulement sur l'export haute résolution ;
+    corrigé en passant à un positionnement absolu explicite pour chaque
+    ligne (Nom/Prénom/signature) au lieu de marges cumulées.
   - **Migration 0003 appliquée par l'utilisateur et revérifiée en
     conditions réelles avec un compte de test** (créé puis supprimé) :
     backfill confirmé pour les 2 membres déjà validés (numéro/UUID de
