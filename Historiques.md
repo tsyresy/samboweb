@@ -213,11 +213,38 @@ Fait :
   admin ne l'affiche encore pour consulter l'historique des décisions de
   validation/suspension.
 
-## Phase 3 — Vie associative ⏳ (pas commencée)
+## Phase 3 — Vie associative 🚧 (en cours, 2026-09-23)
 
-- Tableau de bord enrichi (actualités internes, activités à venir).
-- `/app/discussions` : fil de discussion, modération.
-- Recherche interne complète dans l'annuaire.
+Fait :
+- `supabase/migrations/0005_discussions.sql` : tables `posts`, `comments`,
+  `content_reports` (signalement) ; RLS ; nouvelle fonction
+  `is_validated_member()` — **bug trouvé et corrigé avant application** :
+  ma première version des policies vérifiait seulement qu'un profil
+  existe (`current_profile_id() is not null`), ce qui aurait laissé un
+  candidat encore « en attente » lire/publier dans les discussions,
+  contrairement au cahier des charges (« fil réservé aux membres
+  validés ») ; corrigé pour vérifier explicitement `status = 'valide'`.
+- `/app/discussions` : fil de publications, réponses en fil, bouton
+  Signaler (ouvre `content_reports`), et pour les admins un bouton
+  Masquer/Réafficher directement inline.
+- `/app/administration/contenu` : file des signalements (nouveau/traité),
+  aperçu du contenu concerné, actions « Masquer le contenu » /
+  « Marquer traité ».
+- `/app/membres` (annuaire) enrichi : filtre par catégorie, recherche
+  étendue à la fonction du bureau, et la fonction (ex. « Responsable
+  logistique ») s'affiche à la place de la catégorie générique quand elle
+  existe — complète la recherche « nom, prénom, surnom, numéro, catégorie
+  ou fonction » du cahier des charges.
+- Vérifié dans un vrai navigateur : dégradation propre (erreur affichée,
+  pas de plantage) avant application de la migration ; annuaire avec
+  filtre catégorie + fonction affichée confirmé avec de vraies données.
+
+À faire :
+- Appliquer `supabase/migrations/0005_discussions.sql` puis revérifier le
+  cycle complet (publier, commenter, signaler, modérer) en conditions
+  réelles.
+- Tableau de bord enrichi (aperçu des dernières discussions, activités à
+  venir) — pas encore fait.
 
 ## Phase 4 — Gestion (adidy) 🚧 (en cours, 2026-09-23)
 

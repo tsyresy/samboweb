@@ -266,6 +266,70 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['dues_records']['Insert']>
         Relationships: []
       }
+      posts: {
+        Row: {
+          id: string
+          author_id: string
+          content: string
+          status: 'visible' | 'hidden'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          author_id: string
+          content: string
+          status?: 'visible' | 'hidden'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['posts']['Insert']>
+        Relationships: []
+      }
+      comments: {
+        Row: {
+          id: string
+          post_id: string
+          author_id: string
+          content: string
+          status: 'visible' | 'hidden'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          author_id: string
+          content: string
+          status?: 'visible' | 'hidden'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['comments']['Insert']>
+        Relationships: []
+      }
+      content_reports: {
+        Row: {
+          id: string
+          reporter_id: string
+          target_table: 'posts' | 'comments'
+          target_id: string
+          reason: string
+          status: 'nouveau' | 'traite'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          reporter_id: string
+          target_table: 'posts' | 'comments'
+          target_id: string
+          reason: string
+          status?: 'nouveau' | 'traite'
+          created_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['content_reports']['Insert']>
+        Relationships: []
+      }
     }
     Views: {
       directory_profiles: {
