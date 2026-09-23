@@ -10,15 +10,18 @@ const memberLinks = [
   { to: '/app/membres', label: 'Annuaire' },
 ]
 
-const adminLinks = [
-  { to: '/app/administration/membres', label: 'Gestion des membres' },
-  { to: '/app/administration/adidy', label: 'Gestion des adidy' },
-  { to: '/app/administration/contenu', label: 'Contenus et messages' },
-]
-
 export function AppLayout() {
   const { profile, signOut } = useAuth()
   const isAdmin = profile?.access_level === 'administrateur'
+  const isResponsable = profile?.access_level === 'responsable'
+
+  const adminLinks = [
+    ...(isAdmin ? [{ to: '/app/administration/membres', label: 'Gestion des membres' }] : []),
+    ...(isAdmin || isResponsable
+      ? [{ to: '/app/administration/adidy', label: 'Gestion des adidy' }]
+      : []),
+    ...(isAdmin ? [{ to: '/app/administration/contenu', label: 'Contenus et messages' }] : []),
+  ]
 
   return (
     <div className="flex min-h-screen bg-sambo-50">
@@ -44,7 +47,7 @@ export function AppLayout() {
             </NavLink>
           ))}
 
-          {isAdmin && (
+          {adminLinks.length > 0 && (
             <>
               <p className="mt-6 px-3 text-xs font-semibold uppercase tracking-wide text-sambo-700/60">
                 Administration

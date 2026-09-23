@@ -8,8 +8,13 @@ export function ProtectedRoute({
   requireAccessLevel,
 }: {
   children: ReactNode
-  requireAccessLevel?: AccessLevel
+  requireAccessLevel?: AccessLevel | AccessLevel[]
 }) {
+  const allowedLevels = requireAccessLevel
+    ? Array.isArray(requireAccessLevel)
+      ? requireAccessLevel
+      : [requireAccessLevel]
+    : null
   const { session, profile, loading, profileLoading } = useAuth()
 
   if (loading || (session && profileLoading)) {
@@ -26,7 +31,7 @@ export function ProtectedRoute({
     return <Navigate to="/app/en-attente" replace />
   }
 
-  if (requireAccessLevel && profile?.access_level !== requireAccessLevel) {
+  if (allowedLevels && (!profile || !allowedLevels.includes(profile.access_level))) {
     return <Navigate to="/app" replace />
   }
 

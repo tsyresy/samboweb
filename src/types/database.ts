@@ -19,6 +19,8 @@ export type ValidationStatusT = 'en_attente' | 'valide' | 'refuse' | 'suspendu'
 
 export type AccessLevelT = 'membre' | 'responsable' | 'administrateur'
 
+export type DuesStatusT = 'paye' | 'impaye' | 'exempte' | 'en_attente'
+
 export interface Database {
   public: {
     Tables: {
@@ -202,6 +204,68 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['audit_logs']['Insert']>
         Relationships: []
       }
+      dues_rules: {
+        Row: {
+          id: string
+          year: number
+          month: number
+          category: MembershipCategoryT | null
+          amount: number
+          currency: string
+          due_date: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          year: number
+          month: number
+          category?: MembershipCategoryT | null
+          amount: number
+          currency?: string
+          due_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['dues_rules']['Insert']>
+        Relationships: []
+      }
+      dues_records: {
+        Row: {
+          id: string
+          profile_id: string
+          rule_id: string | null
+          year: number
+          month: number
+          status: DuesStatusT
+          amount_paid: number | null
+          payment_date: string | null
+          payment_method: string | null
+          reference: string | null
+          note: string | null
+          confirmed_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          profile_id: string
+          rule_id?: string | null
+          year: number
+          month: number
+          status?: DuesStatusT
+          amount_paid?: number | null
+          payment_date?: string | null
+          payment_method?: string | null
+          reference?: string | null
+          note?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Database['public']['Tables']['dues_records']['Insert']>
+        Relationships: []
+      }
     }
     Views: {
       directory_profiles: {
@@ -241,12 +305,25 @@ export interface Database {
         }
         Relationships: []
       }
+      unpaid_members: {
+        Row: {
+          id: string
+          member_number: string | null
+          last_name: string | null
+          first_names: string | null
+          nickname: string | null
+          photo_url: string | null
+          category: MembershipCategoryT
+        }
+        Relationships: []
+      }
     }
     Functions: Record<string, never>
     Enums: {
       membership_category_t: MembershipCategoryT
       validation_status_t: ValidationStatusT
       access_level_t: AccessLevelT
+      dues_status_t: DuesStatusT
     }
   }
 }

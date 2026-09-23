@@ -219,13 +219,43 @@ Fait :
 - `/app/discussions` : fil de discussion, modération.
 - Recherche interne complète dans l'annuaire.
 
-## Phase 4 — Gestion (adidy) ⏳ (pas commencée)
+## Phase 4 — Gestion (adidy) 🚧 (en cours, 2026-09-23)
 
-- Tables `dues_rules`, `dues_records`.
-- `/app/adidy` (vue membre) et `/app/administration/adidy` (vue
-  responsable/admin), cartes profil des impayés visibles par tous les
-  membres.
-- Journal des corrections de paiement (ancien état conservé).
+Fait :
+- `supabase/migrations/0004_adidy.sql` : tables `dues_rules` (montant par
+  année/mois, catégorie optionnelle) et `dues_records` (statut, montant
+  payé, mode, référence, note — une ligne par membre et par mois) ; RLS
+  (un membre ne voit que ses propres lignes par défaut ; `responsable` ou
+  `administrateur` gèrent tout — nouvelle fonction `is_responsable()`) ;
+  trigger d'audit sur les corrections de paiement (même principe que pour
+  `profiles`) ; vue publique `unpaid_members` (noms/photos des membres
+  ayant au moins une cotisation impayée, **jamais les montants**, visible
+  par tous les membres validés — restriction faite dans la vue elle-même
+  via `auth.uid()`, pas seulement par RLS).
+- `/app/adidy` (vue membre) : calendrier des 12 mois de l'année
+  sélectionnée avec montant dû et statut, plus la grille « Membres avec
+  des cotisations impayées ».
+- `/app/administration/adidy` (accessible aux `administrateur` **et**
+  `responsable`) : réglage du montant du mois, tableau de tous les
+  membres validés avec statut/montant payé/mode/référence éditables en
+  ligne. `ProtectedRoute` généralisé pour accepter plusieurs niveaux
+  d'accès (`requireAccessLevel` prend maintenant aussi un tableau), pas
+  seulement `administrateur`.
+- Bug de typage réel trouvé et corrigé : un pattern `{ [field]: value }`
+  avec une clé calculée cassait l'inférence de type stricte de
+  supabase-js (le type retombait sur un index `string` générique que la
+  lib rejette) — remplacé par un objet `Partial<...>` explicite à chaque
+  appel.
+- Vérifié dans un vrai navigateur : les deux pages se dégradent
+  proprement (« Montant non défini », statut par défaut) quand la
+  migration n'est pas encore appliquée, plutôt que de planter.
+
+À faire :
+- Appliquer `supabase/migrations/0004_adidy.sql` (Dashboard → SQL Editor
+  → Run) puis revérifier en conditions réelles (comme pour les
+  migrations précédentes).
+- Exports (mentionnés dans le cahier des charges pour
+  `/app/administration/adidy`) — pas encore construits.
 
 ## Phase 5 — Paiements ⏳ (pas commencée)
 

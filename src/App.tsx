@@ -3,9 +3,11 @@ import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { AppLayout } from '@/layouts/AppLayout'
 import { PublicLayout } from '@/layouts/PublicLayout'
 import { About } from '@/pages/About'
+import { AdminDues } from '@/pages/app/admin/AdminDues'
 import { AdminMembers } from '@/pages/app/admin/AdminMembers'
 import { ComingSoon } from '@/pages/app/ComingSoon'
 import { Dashboard } from '@/pages/app/Dashboard'
+import { Dues } from '@/pages/app/Dues'
 import { Members } from '@/pages/app/Members'
 import { MembershipCard } from '@/pages/app/MembershipCard'
 import { PendingApproval } from '@/pages/app/PendingApproval'
@@ -50,7 +52,7 @@ function App() {
         <Route path="profil" element={<Profile />} />
         <Route path="carte" element={<MembershipCard />} />
         <Route path="discussions" element={<ComingSoon title="Discussions" />} />
-        <Route path="adidy" element={<ComingSoon title="Mes adidy" />} />
+        <Route path="adidy" element={<Dues />} />
         <Route path="membres" element={<Members />} />
         <Route
           path="administration/membres"
@@ -63,8 +65,8 @@ function App() {
         <Route
           path="administration/adidy"
           element={
-            <ProtectedRoute requireAccessLevel="administrateur">
-              <ComingSoon title="Gestion des adidy" />
+            <ProtectedRoute requireAccessLevel={['administrateur', 'responsable']}>
+              <AdminDues />
             </ProtectedRoute>
           }
         />
