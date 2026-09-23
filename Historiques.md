@@ -278,6 +278,17 @@ Fait :
     mais s'est avéré être un artefact du test lui-même (mutation directe
     du DOM contournant l'état React, provoquant un bail-out silencieux),
     pas un vrai bug ; confirmé propre une fois le test corrigé.
+- **Bug corrigé — déconnexion figée sur la page « en attente »** : le
+  bouton « Se déconnecter » de `PendingApproval.tsx` appelait `signOut()`
+  sans jamais rediriger ensuite. Ça fonctionne ailleurs dans l'appli
+  (sidebar de `AppLayout`) parce que ces pages sont protégées par
+  `ProtectedRoute`, qui redirige automatiquement vers `/connexion` dès
+  que la session disparaît — mais `/app/en-attente` est une route à part,
+  hors de ce garde-fou, donc rien ne réagissait à la déconnexion.
+  Ajouté une redirection explicite vers `/` après `signOut()`. Vérifié
+  en vrai navigateur avec un vrai compte : inscription → connexion →
+  atterrissage sur `/app/en-attente` → déconnexion → redirection
+  immédiate vers l'accueil. Compte de test supprimé après vérification.
 
 À faire :
 - Appliquer `supabase/migrations/0006_cin_number.sql`.

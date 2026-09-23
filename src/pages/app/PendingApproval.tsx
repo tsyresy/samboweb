@@ -1,7 +1,14 @@
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 
 export function PendingApproval() {
   const { signOut } = useAuth()
+  const navigate = useNavigate()
+
+  async function handleSignOut() {
+    await signOut()
+    navigate('/')
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-sambo-50 px-4 text-center">
@@ -12,7 +19,7 @@ export function PendingApproval() {
       </p>
       <button
         type="button"
-        onClick={() => signOut()}
+        onClick={handleSignOut}
         className="mt-6 rounded-full border border-sambo-300 px-5 py-2 text-sm font-medium text-sambo-900 hover:bg-sambo-100"
       >
         Se déconnecter
