@@ -198,6 +198,15 @@ Fait :
     vraie erreur de requête (ex. table pas encore créée) exactement comme
     un « carte introuvable », ce qui aurait caché un problème réel derrière
     un message trompeur — état d'erreur séparé ajouté.
+  - **Migration 0003 appliquée par l'utilisateur et revérifiée en
+    conditions réelles avec un compte de test** (créé puis supprimé) :
+    backfill confirmé pour les 2 membres déjà validés (numéro/UUID de
+    secours corrects) ; validation d'un nouveau membre → carte créée
+    automatiquement par le trigger avec le bon numéro ; suspension →
+    carte automatiquement révoquée (`status: revoked`, `revoked_at`
+    renseigné) ; page `/verifier/:id` testée dans les trois états (valide,
+    révoquée, introuvable) ; téléchargement PNG haute résolution
+    fonctionnel.
 
 À faire :
 - Journal d'audit : la table logue déjà les changements, mais aucune page
