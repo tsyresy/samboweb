@@ -1,6 +1,7 @@
+import type { RealtimeChannel } from '@supabase/supabase-js'
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { supabase } from '@/lib/supabase'
+import { openChannel } from '@/lib/realtime'
 
 /** Profile ids of the members currently connected to the member space. */
 const PresenceContext = createContext<Set<string>>(new Set())
@@ -20,20 +21,27 @@ export function PresenceProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!profileId) return
 
-    const channel = supabase.channel('presence:membres', {
-      config: { presence: { key: profileId } },
+    let current: RealtimeChannel | null = null
+    const close = openChannel('presence:membres', { config: { presence: { key: profileId } } }, (channel) => {
+      current = channel
+      channel
+        .on('presence', { event: 'sync' }, () => {
+          setOnline(new Set(Object.keys(channel.presenceState())))
+        })
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') channel.track({ online_at: new Date().toISOString() })
+        })
     })
 
-    channel
-      .on('presence', { event: 'sync' }, () => {
-        setOnline(new Set(Object.keys(channel.presenceState())))
-      })
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') channel.track({ online_at: new Date().toISOString() })
-      })
+    // A closed or reloaded tab otherwise lingers as "en ligne" for others
+    // until the server notices the dead socket (tens of seconds): announce
+    // the departure explicitly while the page can still send it.
+    const leave = () => current?.untrack()
+    window.addEventListener('pagehide', leave)
 
     return () => {
-      supabase.removeChannel(channel)
+      window.removeEventListener('pagehide', leave)
+      close()
       setOnline(new Set())
     }
   }, [profileId])

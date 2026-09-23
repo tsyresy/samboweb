@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEven
 import { UnpaidWall } from '@/components/UnpaidWall'
 import { useAuth } from '@/context/AuthContext'
 import { useOnlineMembers } from '@/context/PresenceContext'
+import { openChannel } from '@/lib/realtime'
 import { supabase } from '@/lib/supabase'
 
 interface MemberInfo {
@@ -90,25 +91,22 @@ export function Chat() {
       setLoading(false)
     })
 
-    const channel = supabase
-      .channel('chat:global')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_messages' }, (payload) => {
-        if (payload.eventType === 'INSERT') {
-          const row = payload.new as MessageRow
-          setMessages((prev) => (prev.some((m) => m.id === row.id) ? prev : [...prev, row]))
-        } else if (payload.eventType === 'UPDATE') {
-          const row = payload.new as MessageRow
-          setMessages((prev) => prev.map((m) => (m.id === row.id ? row : m)))
-        } else if (payload.eventType === 'DELETE') {
-          const id = (payload.old as Partial<MessageRow>).id
-          setMessages((prev) => prev.filter((m) => m.id !== id))
-        }
-      })
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
+    return openChannel('chat:global', undefined, (channel) => {
+      channel
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_messages' }, (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const row = payload.new as MessageRow
+            setMessages((prev) => (prev.some((m) => m.id === row.id) ? prev : [...prev, row]))
+          } else if (payload.eventType === 'UPDATE') {
+            const row = payload.new as MessageRow
+            setMessages((prev) => prev.map((m) => (m.id === row.id ? row : m)))
+          } else if (payload.eventType === 'DELETE') {
+            const id = (payload.old as Partial<MessageRow>).id
+            setMessages((prev) => prev.filter((m) => m.id !== id))
+          }
+        })
+        .subscribe()
+    })
   }, [])
 
   useEffect(() => {
