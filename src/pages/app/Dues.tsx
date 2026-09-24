@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { DEFAULT_DUES_AMOUNT, fetchMyDuesTotal, formatAr, type DuesTotal } from '@/lib/dues'
 import { supabase } from '@/lib/supabase'
 import type { DuesStatus, MembershipCategory } from '@/types'
 
@@ -57,6 +58,7 @@ export function Dues() {
   const [rules, setRules] = useState<RuleRow[]>([])
   const [records, setRecords] = useState<RecordRow[]>([])
   const [unpaid, setUnpaid] = useState<UnpaidMember[]>([])
+  const [totalDue, setTotalDue] = useState<DuesTotal | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -71,24 +73,36 @@ export function Dues() {
         .eq('profile_id', profile.id)
         .eq('year', year),
       supabase.from('unpaid_members').select('*'),
-    ]).then(([rulesRes, recordsRes, unpaidRes]) => {
+      fetchMyDuesTotal(),
+    ]).then(([rulesRes, recordsRes, unpaidRes, total]) => {
       setRules(rulesRes.data ?? [])
       setRecords(recordsRes.data ?? [])
       setUnpaid(unpaidRes.data ?? [])
+      setTotalDue(total)
       setLoading(false)
     })
   }, [profile, year])
 
+  // Mirrors the unpaid_dues_detail view (migration 0010): this year,
+  // every month up to now is due at the rule's amount or the default;
+  // earlier years only for months that had an amount set.
   const monthly = useMemo(() => {
+    const now = new Date()
+    const nowYear = now.getFullYear()
+    const nowMonth = now.getMonth() + 1
     return Array.from({ length: 12 }, (_, i) => {
       const month = i + 1
       const rule =
         rules.find((r) => r.month === month && r.category === profile?.category) ??
         rules.find((r) => r.month === month && r.category === null)
       const record = records.find((r) => r.month === month)
-      return { month, rule, record }
+      const amount = rule ? rule.amount : year >= nowYear ? DEFAULT_DUES_AMOUNT : null
+      const isPast = year < nowYear || (year === nowYear && month <= nowMonth)
+      const status: DuesStatus | null =
+        record?.status ?? (isPast && amount !== null && amount > 0 ? 'impaye' : null)
+      return { month, rule, amount, status }
     })
-  }, [rules, records, profile])
+  }, [rules, records, profile, year])
 
   if (!profile || loading) {
     return <p className="text-sambo-700/60">Chargement…</p>
@@ -101,6 +115,24 @@ export function Dues() {
         Suivi de vos cotisations mensuelles. Le paiement se fait auprès du trésorier — l'admin
         marque ici ce qui a été réglé.
       </p>
+
+      {totalDue && (
+        <div
+          className={`mt-6 rounded-2xl border p-5 ${
+            totalDue.amount > 0 ? 'border-red-200 bg-red-50' : 'border-sambo-200 bg-sambo-100/60'
+          }`}
+        >
+          <p className="text-sm font-medium text-sambo-800">Total dû à ce jour</p>
+          <p className={`mt-1 text-3xl font-bold ${totalDue.amount > 0 ? 'text-red-700' : 'text-sambo-700'}`}>
+            {formatAr(totalDue.amount)}
+          </p>
+          <p className="mt-1 text-xs text-sambo-700/70">
+            {totalDue.months > 0
+              ? `${totalDue.months} mois impayé${totalDue.months > 1 ? 's' : ''}, toutes années confondues.`
+              : 'Vous êtes à jour. Misaotra !'}
+          </p>
+        </div>
+      )}
 
       <div className="mt-4 flex items-center gap-2">
         <button
@@ -121,27 +153,25 @@ export function Dues() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {monthly.map(({ month, rule, record }) => {
-          const status = record?.status ?? (rule ? 'impaye' : null)
-          return (
-            <div
-              key={month}
-              className="flex items-center justify-between rounded-xl border border-sambo-200/70 bg-white p-4 shadow-sm"
-            >
-              <div>
-                <p className="font-medium text-sambo-950">{MONTH_NAMES[month - 1]}</p>
-                <p className="text-xs text-sambo-700/60">
-                  {rule ? `${rule.amount.toLocaleString('fr-FR')} ${rule.currency}` : 'Montant non défini'}
-                </p>
-              </div>
-              {status && (
-                <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[status]}`}>
-                  {STATUS_LABELS[status]}
-                </span>
-              )}
+        {monthly.map(({ month, rule, amount, status }) => (
+          <div
+            key={month}
+            className="flex items-center justify-between rounded-xl border border-sambo-200/70 bg-white p-4 shadow-sm"
+          >
+            <div>
+              <p className="font-medium text-sambo-950">{MONTH_NAMES[month - 1]}</p>
+              <p className="text-xs text-sambo-700/60">
+                {amount === null ? '—' : amount === 0 ? 'Gratuit' : formatAr(amount)}
+                {!rule && amount !== null && ' (par défaut)'}
+              </p>
             </div>
-          )
-        })}
+            {status && (
+              <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[status]}`}>
+                {STATUS_LABELS[status]}
+              </span>
+            )}
+          </div>
+        ))}
       </div>
 
       {unpaid.length > 0 && (

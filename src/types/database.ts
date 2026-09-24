@@ -402,6 +402,14 @@ export interface Database {
         }
         Relationships: []
       }
+      my_unpaid_dues: {
+        Row: {
+          year: number
+          month: number
+          amount_due: number
+        }
+        Relationships: []
+      }
     }
     Functions: Record<string, never>
     Enums: {

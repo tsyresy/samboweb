@@ -438,12 +438,31 @@ Fait :
   fermeture au changement de page, Échap ou clic sur le fond). Vérifié
   sur 390px, sans débordement horizontal.
 
+- **Montant par défaut 1 000 Ar/mois + total dû personnel** (migration
+  `0010`) : un mois sans règle vaut 1 000 Ar (`default_dues_amount()`,
+  constante `DEFAULT_DUES_AMOUNT` côté front) ; une règle explicite reste
+  prioritaire (0 = mois gratuit). Le détail des impayés avec montants est
+  dans la vue interne `private.unpaid_dues_detail` (schéma non exposé,
+  aucun droit pour les membres) ; `unpaid_members` (mur public) n'expose
+  toujours que le nombre de mois, et la nouvelle vue `my_unpaid_dues`
+  donne à chaque membre ses propres mois/montants. Paiement partiel sur
+  une ligne « impayé » déduit du montant.
+  - Tableau de bord : carte « Mes adidy — total dû » (rouge si dû).
+  - `/app/adidy` : encadré « Total dû à ce jour » ; « 1 000 Ar (par
+    défaut) » au lieu de « Montant non défini ».
+  - Écran admin : **vider le champ montant enregistrait 0 Ar** (mois
+    gratuit, `Number('') === 0`) — il supprime maintenant la règle (retour
+    au défaut). La migration supprime la règle 0 Ar de janvier 2026
+    créée ainsi.
+  - Testé sur PGlite. **Deux bugs trouvés avant mise en prod** :
+    (1) une fonction `security definer` à EXECUTE révoqué casse les vues
+    qui l'appellent (le droit d'exécution est vérifié pour l'utilisateur
+    final) → remplacée par une vue en schéma `private` ; (2) un mois
+    marqué impayé pour un seul membre devenait dû pour tous une fois le
+    montant par défaut en place → désormais limité à ce membre.
+
 À faire :
-- Appliquer `0009` dans le SQL Editor Supabase.
-- Définir le montant de janvier 2026 (actuellement absent : le mois est
-  compté dû mais s'affiche « Montant non défini » dans `/app/adidy`).
-- Supprimer les comptes de test TESTCHAT Alpha / Bravo
-  (Authentication → Users).
+- Appliquer `0010` dans le SQL Editor Supabase.
 
 ## Phase 5 — Paiements ⏳ (pas commencée)
 

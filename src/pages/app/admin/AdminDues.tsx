@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { DEFAULT_DUES_AMOUNT, formatAr } from '@/lib/dues'
 import { supabase } from '@/lib/supabase'
 import type { DuesStatus, Profile } from '@/types'
 
@@ -84,9 +85,26 @@ export function AdminDues() {
   }, [records])
 
   async function saveRule() {
-    const amount = Number(ruleAmount)
-    if (Number.isNaN(amount) || amount < 0) return
     setSavingRule(true)
+
+    // An emptied field means "no specific amount": drop the rule so the
+    // month falls back to the default, instead of Number('') silently
+    // saving it as 0 Ar (a free month).
+    if (ruleAmount.trim() === '') {
+      if (ruleId) {
+        const { error: deleteError } = await supabase.from('dues_rules').delete().eq('id', ruleId)
+        if (deleteError) setError(deleteError.message)
+        else setRuleId(null)
+      }
+      setSavingRule(false)
+      return
+    }
+
+    const amount = Number(ruleAmount)
+    if (Number.isNaN(amount) || amount < 0) {
+      setSavingRule(false)
+      return
+    }
 
     if (ruleId) {
       await supabase.from('dues_rules').update({ amount }).eq('id', ruleId)
@@ -184,6 +202,7 @@ export function AdminDues() {
               type="number"
               value={ruleAmount}
               onChange={(e) => setRuleAmount(e.target.value)}
+              placeholder={String(DEFAULT_DUES_AMOUNT)}
               className="w-32 rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
             />
             <button
@@ -195,6 +214,10 @@ export function AdminDues() {
               {savingRule ? '…' : 'Enregistrer'}
             </button>
           </div>
+          <p className="mt-1 text-xs text-sambo-700/60">
+            {ruleId ? 'Montant spécifique à ce mois.' : `Par défaut : ${formatAr(DEFAULT_DUES_AMOUNT)}.`} Laisser
+            vide = montant par défaut, 0 = mois gratuit.
+          </p>
         </div>
       </div>
 
