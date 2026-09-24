@@ -402,6 +402,15 @@ export interface Database {
         }
         Relationships: []
       }
+      payment_frequency: {
+        Row: {
+          year: number
+          month: number
+          payment_date: string
+          payers: number
+        }
+        Relationships: []
+      }
       my_unpaid_dues: {
         Row: {
           year: number

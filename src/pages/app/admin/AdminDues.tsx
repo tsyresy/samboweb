@@ -20,6 +20,7 @@ interface RecordRow {
   profile_id: string
   status: DuesStatus
   amount_paid: number | null
+  payment_date: string | null
   payment_method: string | null
   reference: string | null
 }
@@ -48,7 +49,7 @@ export function AdminDues() {
       supabase.from('profiles').select('*').eq('status', 'valide').order('last_name'),
       supabase
         .from('dues_records')
-        .select('id, profile_id, status, amount_paid, payment_method, reference')
+        .select('id, profile_id, status, amount_paid, payment_date, payment_method, reference')
         .eq('year', year)
         .eq('month', month),
       supabase
@@ -122,7 +123,7 @@ export function AdminDues() {
 
   async function updateRecordField(
     profileId: string,
-    patch: Partial<Pick<RecordRow, 'status' | 'amount_paid' | 'payment_method' | 'reference'>>,
+    patch: Partial<Pick<RecordRow, 'status' | 'amount_paid' | 'payment_date' | 'payment_method' | 'reference'>>,
   ) {
     const existing = recordByProfile.get(profileId)
 
@@ -230,6 +231,7 @@ export function AdminDues() {
               <th className="px-4 py-3">Membre</th>
               <th className="px-4 py-3">Statut</th>
               <th className="px-4 py-3">Montant payé</th>
+              <th className="px-4 py-3">Date de paiement</th>
               <th className="px-4 py-3">Mode</th>
               <th className="px-4 py-3">Référence</th>
             </tr>
@@ -266,6 +268,21 @@ export function AdminDues() {
                         })
                       }
                       className="w-24 rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
+                    />
+                  </td>
+                  <td className="px-4 py-3">
+                    {/* Keyed on the stored date: filled in by the database
+                        when the status becomes « Payé », so the input must
+                        remount to show it. */}
+                    <input
+                      key={record?.payment_date ?? 'none'}
+                      type="date"
+                      defaultValue={record?.payment_date ?? ''}
+                      onBlur={(e) => {
+                        const value = e.target.value || null
+                        if (value !== (record?.payment_date ?? null)) updateRecordField(m.id, { payment_date: value })
+                      }}
+                      className="rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
                     />
                   </td>
                   <td className="px-4 py-3">

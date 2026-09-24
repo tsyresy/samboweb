@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { PaymentFrequencyChart } from '@/components/PaymentFrequencyChart'
 import { useAuth } from '@/context/AuthContext'
 import { DEFAULT_DUES_AMOUNT, fetchMyDuesTotal, formatAr, type DuesTotal } from '@/lib/dues'
 import { supabase } from '@/lib/supabase'
@@ -37,27 +38,12 @@ interface RecordRow {
   payment_date: string | null
 }
 
-interface UnpaidMember {
-  id: string
-  member_number: string | null
-  last_name: string | null
-  first_names: string | null
-  nickname: string | null
-  photo_url: string | null
-  category: MembershipCategory
-}
-
-function fullName(m: UnpaidMember) {
-  return [m.last_name, m.first_names].filter(Boolean).join(' ') || '(nom non renseigné)'
-}
-
 export function Dues() {
   const { profile } = useAuth()
   const currentYear = new Date().getFullYear()
   const [year, setYear] = useState(currentYear)
   const [rules, setRules] = useState<RuleRow[]>([])
   const [records, setRecords] = useState<RecordRow[]>([])
-  const [unpaid, setUnpaid] = useState<UnpaidMember[]>([])
   const [totalDue, setTotalDue] = useState<DuesTotal | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -72,12 +58,10 @@ export function Dues() {
         .select('month, status, amount_paid, payment_date')
         .eq('profile_id', profile.id)
         .eq('year', year),
-      supabase.from('unpaid_members').select('*'),
       fetchMyDuesTotal(),
-    ]).then(([rulesRes, recordsRes, unpaidRes, total]) => {
+    ]).then(([rulesRes, recordsRes, total]) => {
       setRules(rulesRes.data ?? [])
       setRecords(recordsRes.data ?? [])
-      setUnpaid(unpaidRes.data ?? [])
       setTotalDue(total)
       setLoading(false)
     })
@@ -174,34 +158,9 @@ export function Dues() {
         ))}
       </div>
 
-      {unpaid.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-lg font-semibold text-sambo-950">Membres avec des cotisations impayées</h2>
-          <p className="mt-1 text-sm text-sambo-700/60">
-            Liste visible par tous les membres, sans les montants ni détails de paiement.
-          </p>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {unpaid.map((m) => (
-              <div
-                key={m.id}
-                className="flex items-center gap-3 rounded-2xl border border-sambo-200/70 bg-white p-4 shadow-sm"
-              >
-                {m.photo_url ? (
-                  <img src={m.photo_url} alt="" className="h-12 w-12 rounded-full object-cover" />
-                ) : (
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-sambo-100 text-base font-semibold text-sambo-700">
-                    {fullName(m).charAt(0)}
-                  </div>
-                )}
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-sambo-950">{fullName(m)}</p>
-                  {m.nickname && <p className="truncate text-xs text-sambo-700/60">« {m.nickname} »</p>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="mt-12">
+        <PaymentFrequencyChart />
+      </div>
     </div>
   )
 }

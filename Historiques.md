@@ -461,8 +461,30 @@ Fait :
     marqué impayé pour un seul membre devenait dû pour tous une fois le
     montant par défaut en place → désormais limité à ce membre.
 
+- **Graphique « Paiements de l'adidy du mois »** sur `/app/adidy`, à la
+  place de la grille « Membres avec des cotisations impayées » (le mur
+  défilant de Discussions/Chat la remplace déjà) : barres par jour de
+  paiement (1 → fin du mois), qui poussent depuis la base au chargement et
+  à chaque changement de mois, total « X membres sur Y ont payé · % »,
+  infobulle au survol/clavier, tableau des données dépliable, navigation
+  mois précédent/suivant. Couleur sambo-500 (validée par le script dataviz ;
+  sambo-700 échouait au seuil de saturation).
+  - Migration `0011` : `payment_date` n'était **jamais renseignée** (l'écran
+    admin ne la saisissait pas) → trigger qui la remplit à la date du jour
+    (heure de Madagascar) au passage à « payé » + rattrapage des paiements
+    existants ; colonne « Date de paiement » éditable dans l'écran admin.
+    Vue `payment_frequency` : nombres par jour uniquement, jamais de nom
+    ni de montant, membres validés seulement. Testée sur PGlite.
+- **Tableau de bord** : « Dernières publications » (3 derniers posts des
+  Discussions, auteur, « il y a 3 h ») et « Dernière actualité » (carte de
+  la dernière actu publique) pour ne plus avoir un tableau de bord vide.
+- Vérifié dans un vrai navigateur (desktop + mobile) avec Supabase simulé
+  par interception Playwright : barres, animation (0 → 176 px en ~0,6 s),
+  infobulle, navigation entre mois, total dû, publications ; 0 erreur
+  console, pas de débordement horizontal.
+
 À faire :
-- Appliquer `0010` dans le SQL Editor Supabase.
+- Appliquer `0011` dans le SQL Editor Supabase.
 
 ## Phase 5 — Paiements ⏳ (pas commencée)
 
