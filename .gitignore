@@ -49,3 +49,24 @@ supabase/.temp
 # Deployment provider secrets
 .vercel
 .netlify
+
+# Supabase Edge Functions local secrets (supabase functions serve --env-file)
+supabase/functions/**/.env*
+supabase/.env*
+
+# Database dumps / backups (contain members' personal data)
+*.dump
+*.backup
+backups/
+dump*.sql
+
+# AI / tooling local state (may hold tokens or session data)
+.claude/settings.local.json
+.mcp.json
+.impeccable/
+
+# Build & test artefacts
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
