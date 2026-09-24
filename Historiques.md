@@ -483,8 +483,18 @@ Fait :
   infobulle, navigation entre mois, total dû, publications ; 0 erreur
   console, pas de débordement horizontal.
 
-À faire :
-- Appliquer `0011` dans le SQL Editor Supabase.
+- **Fin de session (2026-09-24)** : migrations `0007` à `0011` toutes
+  appliquées par l'utilisateur ; comptes de test TESTCHAT supprimés ;
+  `.gitignore` renforcé (aucun secret trouvé dans les fichiers suivis ni
+  dans l'historique git) ; tout poussé sur `origin/main` (`82bb57d`).
+
+À faire (prochaine session) :
+- Vérifier sur les vraies données : passer un membre à « Payé » → la date
+  du jour apparaît dans « Date de paiement » et une barre s'ajoute au
+  graphique de `/app/adidy` (testé jusqu'ici avec données simulées).
+- Exports de l'écran `/app/administration/adidy` (toujours pas faits).
+- Appel vidéo de groupe du Chat (bouton présent mais désactivé, prévu pour
+  l'application mobile).
 
 ## Phase 5 — Paiements ⏳ (pas commencée)
 
