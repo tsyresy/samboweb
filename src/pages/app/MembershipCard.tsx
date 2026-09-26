@@ -70,14 +70,14 @@ export function MembershipCard() {
   }
 
   if (!profile || loading) {
-    return <p className="text-sambo-700/60">Chargement…</p>
+    return <p className="text-ink-subtle">Chargement…</p>
   }
 
   if (profile.status !== 'valide') {
     return (
       <div>
-        <h1 className="text-2xl font-semibold text-sambo-950">Ma carte de membre</h1>
-        <p className="mt-3 text-sambo-800/70">
+        <h1 className="text-2xl font-semibold text-ink">Ma carte de membre</h1>
+        <p className="mt-3 text-ink-muted">
           Votre carte sera disponible une fois votre adhésion validée par un administrateur.
         </p>
       </div>
@@ -87,8 +87,8 @@ export function MembershipCard() {
   if (!card) {
     return (
       <div>
-        <h1 className="text-2xl font-semibold text-sambo-950">Ma carte de membre</h1>
-        <p className="mt-3 text-sambo-800/70">
+        <h1 className="text-2xl font-semibold text-ink">Ma carte de membre</h1>
+        <p className="mt-3 text-ink-muted">
           Votre carte n'a pas encore été générée. Réessayez dans un instant, ou contactez un
           administrateur si cela persiste.
         </p>
@@ -98,10 +98,10 @@ export function MembershipCard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-sambo-950">Ma carte de membre</h1>
+      <h1 className="text-2xl font-semibold text-ink">Ma carte de membre</h1>
 
       {card.status === 'revoked' && (
-        <p className="mt-3 rounded-xl bg-red-50 px-4 py-2 text-sm text-red-700">
+        <p className="mt-3 rounded-xl bg-red-500/10 px-4 py-2 text-sm text-danger">
           Cette carte est révoquée et n'est plus valide.
         </p>
       )}
@@ -109,7 +109,7 @@ export function MembershipCard() {
       <div className="mt-6 flex flex-col items-start gap-6 sm:flex-row">
         <MembershipCardView ref={cardRef} profile={profile} roleLabel={roleLabel} verificationId={card.verification_id} />
 
-        <div className="max-w-xs text-sm text-sambo-800/70">
+        <div className="max-w-xs text-sm text-ink-muted">
           <p>
             Le QR code renvoie vers une page de vérification publique : elle confirme seulement
             que la carte est valide, sans révéler vos informations personnelles.
@@ -118,7 +118,7 @@ export function MembershipCard() {
             type="button"
             onClick={handleDownload}
             disabled={downloading}
-            className="mt-4 rounded-xl bg-sambo-700 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-sambo-800 disabled:opacity-60"
+            className="mt-4 rounded-xl btn-primary px-5 py-2.5 text-sm disabled:opacity-60"
           >
             {downloading ? 'Génération…' : 'Télécharger (PNG)'}
           </button>

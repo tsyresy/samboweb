@@ -14,21 +14,23 @@ export function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-40 border-b border-sambo-200/60 bg-sambo-50/90 backdrop-blur">
+    <header className="glass-strong sticky top-0 z-40 border-x-0 border-t-0">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
           <img src="/sambo-logo.png" alt="SAMBO" className="h-9 w-9 rounded-full object-cover" />
-          <span className="text-lg font-semibold text-sambo-900">SAMBO</span>
+          <span className="text-lg font-semibold text-ink">SAMBO</span>
         </Link>
 
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="glass hidden items-center gap-1 rounded-full p-1 md:flex">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `text-sm font-medium transition-colors ${
-                  isActive ? 'text-sambo-700' : 'text-sambo-900/70 hover:text-sambo-700'
+                `rounded-full px-3.5 py-1.5 text-sm font-medium ${
+                  isActive
+                    ? 'bg-white/[0.14] text-ink shadow-[inset_0_1px_0_oklch(1_0_0/0.1)]'
+                    : 'text-ink-muted hover:bg-white/[0.07] hover:text-ink'
                 }`
               }
             >
@@ -41,7 +43,7 @@ export function Navbar() {
           {user ? (
             <Link
               to="/app"
-              className="rounded-full bg-sambo-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sambo-800"
+              className="rounded-full btn-primary px-4 py-2 text-sm"
             >
               Mon espace
             </Link>
@@ -49,13 +51,13 @@ export function Navbar() {
             <>
               <Link
                 to="/connexion"
-                className="text-sm font-medium text-sambo-900/80 hover:text-sambo-700"
+                className="rounded-full px-3 py-2 text-sm font-medium text-ink-muted hover:bg-white/[0.07] hover:text-ink"
               >
                 Connexion
               </Link>
               <Link
                 to="/inscription"
-                className="rounded-full bg-sambo-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-sambo-800"
+                className="rounded-full btn-primary px-4 py-2 text-sm"
               >
                 Inscription
               </Link>
@@ -65,7 +67,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className="text-sambo-900 md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-ink hover:bg-white/10 md:hidden"
           aria-label="Ouvrir le menu"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
@@ -81,13 +83,13 @@ export function Navbar() {
       </nav>
 
       {open && (
-        <div className="flex flex-col gap-1 border-t border-sambo-200/60 px-4 pb-4 md:hidden">
+        <div className="flex flex-col gap-1 border-t border-line px-4 pb-4 md:hidden">
           {links.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               onClick={() => setOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-sambo-900/80 hover:bg-sambo-100"
+              className="rounded-xl px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-white/10 hover:text-ink"
             >
               {link.label}
             </NavLink>
@@ -97,7 +99,7 @@ export function Navbar() {
               <Link
                 to="/app"
                 onClick={() => setOpen(false)}
-                className="flex-1 rounded-full bg-sambo-700 px-4 py-2 text-center text-sm font-medium text-white"
+                className="flex-1 rounded-full btn-primary px-4 py-2 text-center text-sm"
               >
                 Mon espace
               </Link>
@@ -106,14 +108,14 @@ export function Navbar() {
                 <Link
                   to="/connexion"
                   onClick={() => setOpen(false)}
-                  className="flex-1 rounded-full border border-sambo-300 px-4 py-2 text-center text-sm font-medium text-sambo-900"
+                  className="btn-glass flex-1 rounded-full px-4 py-2 text-center text-sm font-medium"
                 >
                   Connexion
                 </Link>
                 <Link
                   to="/inscription"
                   onClick={() => setOpen(false)}
-                  className="flex-1 rounded-full bg-sambo-700 px-4 py-2 text-center text-sm font-medium text-white"
+                  className="flex-1 rounded-full btn-primary px-4 py-2 text-center text-sm"
                 >
                   Inscription
                 </Link>

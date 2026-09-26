@@ -13,10 +13,10 @@ import { supabase } from '@/lib/supabase'
 import type { DuesStatus, MembershipCategory } from '@/types'
 
 const STATUS_STYLES: Record<DuesStatus, string> = {
-  paye: 'bg-sambo-100 text-sambo-700',
-  impaye: 'bg-red-100 text-red-700',
-  exempte: 'bg-sambo-100 text-sambo-700',
-  en_attente: 'bg-gold-400/20 text-gold-600',
+  paye: 'bg-white/10 text-accent',
+  impaye: 'bg-red-500/15 text-danger',
+  exempte: 'bg-white/10 text-accent',
+  en_attente: 'bg-gold-400/20 text-gold-300',
 }
 
 interface RuleRow {
@@ -84,13 +84,13 @@ export function Dues() {
   }, [rules, records, profile, year])
 
   if (!profile || loading) {
-    return <p className="text-sambo-700/60">Chargement…</p>
+    return <p className="text-ink-subtle">Chargement…</p>
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-sambo-950">Mes adidy</h1>
-      <p className="mt-2 text-sambo-800/70">
+      <h1 className="text-2xl font-semibold text-ink">Mes adidy</h1>
+      <p className="mt-2 text-ink-muted">
         Suivi de vos cotisations mensuelles. Le paiement se fait auprès du trésorier — l'admin
         marque ici ce qui a été réglé.
       </p>
@@ -98,14 +98,14 @@ export function Dues() {
       {totalDue && (
         <div
           className={`mt-6 rounded-2xl border p-5 ${
-            totalDue.amount > 0 ? 'border-red-200 bg-red-50' : 'border-sambo-200 bg-sambo-100/60'
+            totalDue.amount > 0 ? 'border-red-400/30 bg-red-500/10' : 'border-line bg-white/[0.06]'
           }`}
         >
-          <p className="text-sm font-medium text-sambo-800">Total dû à ce jour</p>
-          <p className={`mt-1 text-3xl font-bold ${totalDue.amount > 0 ? 'text-red-700' : 'text-sambo-700'}`}>
+          <p className="text-sm font-medium text-ink-muted">Total dû à ce jour</p>
+          <p className={`mt-1 text-3xl font-bold ${totalDue.amount > 0 ? 'text-danger' : 'text-accent'}`}>
             {formatAr(totalDue.amount)}
           </p>
-          <p className="mt-1 text-xs text-sambo-700/70">
+          <p className="mt-1 text-xs text-ink-muted">
             {totalDue.months > 0
               ? `${totalDue.months} mois impayé${totalDue.months > 1 ? 's' : ''}, toutes années confondues.`
               : 'Vous êtes à jour. Misaotra !'}
@@ -117,15 +117,15 @@ export function Dues() {
         <button
           type="button"
           onClick={() => setYear((y) => y - 1)}
-          className="rounded-full border border-sambo-200 px-3 py-1 text-sm text-sambo-900 hover:bg-sambo-100"
+          className="rounded-full px-3 py-1 text-sm btn-glass"
         >
           ←
         </button>
-        <span className="text-sm font-medium text-sambo-950">{year}</span>
+        <span className="text-sm font-medium text-ink">{year}</span>
         <button
           type="button"
           onClick={() => setYear((y) => y + 1)}
-          className="rounded-full border border-sambo-200 px-3 py-1 text-sm text-sambo-900 hover:bg-sambo-100"
+          className="rounded-full px-3 py-1 text-sm btn-glass"
         >
           →
         </button>
@@ -135,11 +135,11 @@ export function Dues() {
         {monthly.map(({ month, rule, amount, status }) => (
           <div
             key={month}
-            className="flex items-center justify-between rounded-xl border border-sambo-200/70 bg-white p-4 shadow-sm"
+            className="flex items-center justify-between rounded-xl border border-line glass p-4"
           >
             <div>
-              <p className="font-medium text-sambo-950">{MONTH_NAMES[month - 1]}</p>
-              <p className="text-xs text-sambo-700/60">
+              <p className="font-medium text-ink">{MONTH_NAMES[month - 1]}</p>
+              <p className="text-xs text-ink-subtle">
                 {amount === null ? '—' : amount === 0 ? 'Gratuit' : formatAr(amount)}
                 {!rule && amount !== null && ' (par défaut)'}
               </p>

@@ -8,15 +8,15 @@ export function Donate() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-semibold text-sambo-950">Faire un don</h1>
-      <p className="mt-3 text-sambo-800/80">
+      <h1 className="text-3xl font-semibold text-ink">Faire un don</h1>
+      <p className="mt-3 text-ink-muted">
         Votre soutien aide SAMBO à financer ses projets et activités. Les moyens de paiement en
         ligne (Stripe, PayPal, Orange Money) seront activés une fois les comptes marchands de
         l'association configurés.
       </p>
 
-      <div className="mt-8 rounded-2xl border border-sambo-200/70 bg-white p-6 shadow-sm">
-        <p className="mb-3 text-sm font-medium text-sambo-900">Montant (Ar)</p>
+      <div className="mt-8 rounded-2xl border border-line glass p-6">
+        <p className="mb-3 text-sm font-medium text-ink">Montant (Ar)</p>
         <div className="grid grid-cols-4 gap-2">
           {PRESET_AMOUNTS.map((preset) => (
             <button
@@ -28,8 +28,8 @@ export function Donate() {
               }}
               className={`rounded-xl border px-3 py-2 text-sm font-medium transition-colors ${
                 amount === preset
-                  ? 'border-sambo-700 bg-sambo-700 text-white'
-                  : 'border-sambo-200 text-sambo-900 hover:bg-sambo-100'
+                  ? 'border-accent bg-accent/15 text-ink'
+                  : 'border-line text-ink hover:bg-white/10'
               }`}
             >
               {preset.toLocaleString('fr-FR')}
@@ -37,7 +37,7 @@ export function Donate() {
           ))}
         </div>
 
-        <label className="mt-4 block text-sm font-medium text-sambo-900" htmlFor="custom-amount">
+        <label className="mt-4 block text-sm font-medium text-ink" htmlFor="custom-amount">
           Ou montant libre
         </label>
         <input
@@ -50,17 +50,17 @@ export function Donate() {
             setAmount(null)
           }}
           placeholder="Montant en Ariary"
-          className="mt-2 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+          className="mt-2 w-full rounded-xl px-3 py-2 text-sm field"
         />
 
-        <p className="mt-3 text-xs text-sambo-700/60">
+        <p className="mt-3 text-xs text-ink-subtle">
           Moyen de paiement : bientôt disponible.
         </p>
 
         <button
           type="button"
           disabled
-          className="mt-6 w-full cursor-not-allowed rounded-xl bg-sambo-300 px-4 py-3 text-sm font-medium text-white"
+          className="btn-glass mt-6 w-full cursor-not-allowed rounded-xl px-4 py-3 text-sm font-medium text-ink-muted opacity-70"
         >
           Paiement en ligne à venir
         </button>

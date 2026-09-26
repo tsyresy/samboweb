@@ -3,6 +3,8 @@
 @theme {
   --font-sans: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
 
+  /* Brand scale — kept for the membership card, the payment chart and
+     other fixed-colour artwork. UI chrome uses the semantic tokens below. */
   --color-sambo-950: #0b1a12;
   --color-sambo-900: #12291e;
   --color-sambo-800: #1c3d2c;
@@ -18,14 +20,201 @@
   --color-gold-600: #b8860b;
   --color-gold-500: #d4a017;
   --color-gold-400: #e6bc3d;
+  --color-gold-300: oklch(0.86 0.12 88);
+
+  /* Dark theme — text on the green-black gradient (all ≥ 4.5:1 on the
+     lightest glass surface). */
+  --color-ink: oklch(0.97 0.01 160);
+  --color-ink-muted: oklch(0.84 0.025 160);
+  --color-ink-subtle: oklch(0.74 0.03 160);
+  --color-accent: oklch(0.83 0.15 156);
+  --color-accent-strong: oklch(0.74 0.16 157);
+  --color-on-accent: oklch(0.2 0.045 160);
+  --color-danger: oklch(0.78 0.14 25);
+  --color-canvas: oklch(0.16 0.035 160);
+  --color-line: oklch(1 0 0 / 0.1);
+  --color-line-strong: oklch(1 0 0 / 0.2);
+
+  --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
+  accent-color: oklch(0.74 0.16 157);
+  background: oklch(0.13 0.03 160);
 }
 
 body {
-  @apply bg-sambo-50 text-sambo-950 antialiased;
+  @apply text-ink antialiased;
+  min-height: 100dvh;
+}
+
+/* The gradient lives on a fixed layer (background-attachment: fixed is
+   ignored by iOS Safari), so glass panels always have colour to blur. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(55% 45% at 8% 0%, oklch(0.5 0.13 156 / 0.45), transparent 70%),
+    radial-gradient(45% 40% at 100% 100%, oklch(0.72 0.12 85 / 0.16), transparent 70%),
+    radial-gradient(40% 35% at 90% 10%, oklch(0.45 0.1 175 / 0.22), transparent 70%),
+    linear-gradient(160deg, #050d09 0%, #0b2016 50%, #06120c 100%);
+}
+
+::selection {
+  background: oklch(0.74 0.16 157 / 0.4);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/* ---------- Motion: only interactive elements move ---------- */
+
+a,
+button,
+summary,
+label,
+input,
+select,
+textarea,
+[role="button"] {
+  transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+  transition-duration: 220ms;
+  transition-timing-function: var(--ease-fluid);
+}
+
+button:not(:disabled):active,
+[role="button"]:active {
+  transform: scale(0.97);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Surfaces ---------- */
+
+@utility glass {
+  background: linear-gradient(180deg, oklch(1 0 0 / 0.085), oklch(1 0 0 / 0.04));
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid var(--color-line);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.08),
+    0 16px 40px -20px oklch(0 0 0 / 0.7);
+}
+
+/* Navigation, drawers and popovers: more opaque so what scrolls
+   underneath never fights the labels. */
+@utility glass-strong {
+  background: oklch(0.19 0.035 160 / 0.72);
+  -webkit-backdrop-filter: blur(30px) saturate(170%);
+  backdrop-filter: blur(30px) saturate(170%);
+  border: 1px solid var(--color-line);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.07);
+}
+
+/* A glass surface that is itself a link: lifts on hover. */
+@utility glass-link {
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-line-strong);
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.1),
+      0 22px 48px -20px oklch(0 0 0 / 0.8);
+  }
+  &:active {
+    transform: translateY(0) scale(0.99);
+  }
+}
+
+/* ---------- Controls ---------- */
+
+@utility btn-primary {
+  color: var(--color-on-accent);
+  font-weight: 600;
+  background: linear-gradient(180deg, oklch(0.86 0.14 155), var(--color-accent-strong));
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.45),
+    0 8px 24px -10px oklch(0.74 0.16 157 / 0.8);
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.5),
+      0 12px 30px -10px oklch(0.74 0.16 157 / 0.95);
+  }
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+@utility btn-glass {
+  color: var(--color-ink);
+  background: oklch(1 0 0 / 0.07);
+  border: 1px solid var(--color-line);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  &:hover:not(:disabled) {
+    background: oklch(1 0 0 / 0.13);
+    border-color: var(--color-line-strong);
+  }
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+}
+
+@utility btn-danger {
+  color: oklch(0.98 0.01 25);
+  font-weight: 600;
+  background: linear-gradient(180deg, oklch(0.62 0.19 25), oklch(0.54 0.19 25));
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.25);
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 oklch(1 0 0 / 0.3),
+      0 10px 26px -12px oklch(0.6 0.2 25 / 0.9);
+  }
+}
+
+@utility field {
+  color: var(--color-ink);
+  background: oklch(0 0 0 / 0.22);
+  border: 1px solid var(--color-line);
+  &::placeholder {
+    color: var(--color-ink-subtle);
+  }
+  &:hover:not(:disabled) {
+    border-color: var(--color-line-strong);
+  }
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    background: oklch(0 0 0 / 0.3);
+    box-shadow: 0 0 0 4px oklch(0.83 0.15 156 / 0.18);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* Native dropdown lists ignore translucency: give options a solid dark. */
+option,
+optgroup {
+  background: oklch(0.2 0.035 160);
+  color: var(--color-ink);
 }
 
 @keyframes pop-in {

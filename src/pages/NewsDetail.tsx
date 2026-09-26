@@ -9,11 +9,11 @@ export function NewsDetail() {
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-      <Link to="/actualites" className="text-sm font-medium text-sambo-700 hover:underline">
+      <Link to="/actualites" className="text-sm font-medium text-accent hover:underline">
         ← Toutes les actualités
       </Link>
 
-      <h1 className="mt-4 text-3xl font-semibold text-sambo-950">{post.title}</h1>
+      <h1 className="mt-4 text-3xl font-semibold text-ink">{post.title}</h1>
 
       <div className="mt-8 space-y-4">
         {post.images.map((src) => (
@@ -21,7 +21,7 @@ export function NewsDetail() {
         ))}
       </div>
 
-      <div className="mt-8 whitespace-pre-line leading-relaxed text-sambo-900/90">{post.body}</div>
+      <div className="mt-8 whitespace-pre-line leading-relaxed text-ink">{post.body}</div>
     </article>
   )
 }

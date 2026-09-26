@@ -65,15 +65,15 @@ export function AdminContent() {
     await load()
   }
 
-  if (loading) return <p className="text-sambo-700/60">Chargement…</p>
+  if (loading) return <p className="text-ink-subtle">Chargement…</p>
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-sambo-950">Contenus et messages</h1>
-      <p className="mt-2 text-sambo-800/70">Signalements des discussions internes.</p>
+      <h1 className="text-2xl font-semibold text-ink">Contenus et messages</h1>
+      <p className="mt-2 text-ink-muted">Signalements des discussions internes.</p>
 
       {reports.length === 0 ? (
-        <p className="mt-8 text-sambo-700/60">Aucun signalement.</p>
+        <p className="mt-8 text-ink-subtle">Aucun signalement.</p>
       ) : (
         <div className="mt-6 space-y-3">
           {reports.map((r) => {
@@ -81,24 +81,24 @@ export function AdminContent() {
             return (
               <div
                 key={r.id}
-                className={`rounded-2xl border bg-white p-4 shadow-sm ${
-                  r.status === 'nouveau' ? 'border-gold-400/60' : 'border-sambo-200/70 opacity-60'
+                className={`rounded-2xl border glass p-4 ${
+                  r.status === 'nouveau' ? 'border-gold-400/60' : 'border-line opacity-60'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-sambo-700/60">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-ink-subtle">
                     {r.target_table === 'posts' ? 'Publication' : 'Commentaire'} — {r.status === 'nouveau' ? 'nouveau' : 'traité'}
                   </span>
-                  <span className="text-xs text-sambo-700/50">
+                  <span className="text-xs text-ink-subtle">
                     {new Date(r.created_at).toLocaleDateString('fr-FR')}
                   </span>
                 </div>
-                <p className="mt-2 text-sm text-sambo-900/90">
+                <p className="mt-2 text-sm text-ink">
                   <span className="font-medium">Motif : </span>
                   {r.reason}
                 </p>
                 {target && (
-                  <p className="mt-1 rounded-lg bg-sambo-50 p-2 text-sm text-sambo-800/80">
+                  <p className="mt-1 rounded-lg bg-white/[0.04] p-2 text-sm text-ink-muted">
                     « {target.content} » {target.status === 'hidden' && <em>(déjà masqué)</em>}
                   </p>
                 )}
@@ -108,7 +108,7 @@ export function AdminContent() {
                       <button
                         type="button"
                         onClick={() => hideContent(r)}
-                        className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700"
+                        className="btn-danger rounded-lg px-3 py-1.5 text-xs"
                       >
                         Masquer le contenu
                       </button>
@@ -116,7 +116,7 @@ export function AdminContent() {
                     <button
                       type="button"
                       onClick={() => dismissReport(r)}
-                      className="rounded-lg border border-sambo-200 px-3 py-1.5 text-xs font-medium text-sambo-900 hover:bg-sambo-100"
+                      className="rounded-lg px-3 py-1.5 text-xs font-medium btn-glass"
                     >
                       Marquer traité
                     </button>

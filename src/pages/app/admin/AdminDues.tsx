@@ -226,18 +226,18 @@ export function AdminDues() {
     downloadCsv(`adidy-${year}-recapitulatif.csv`, rows)
   }
 
-  if (loading) return <p className="text-sambo-700/60">Chargement…</p>
+  if (loading) return <p className="text-ink-subtle">Chargement…</p>
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-sambo-950">Gestion des adidy</h1>
-      <p className="mt-2 text-sambo-800/70">
+      <h1 className="text-2xl font-semibold text-ink">Gestion des adidy</h1>
+      <p className="mt-2 text-ink-muted">
         Le paiement se fait en interne avec le trésorier — enregistrez ici ce qui a été réglé.
       </p>
 
       <div className="mt-6 flex flex-wrap items-end gap-4">
         <div>
-          <label className="block text-sm font-medium text-sambo-900" htmlFor="year">
+          <label className="block text-sm font-medium text-ink" htmlFor="year">
             Année
           </label>
           <input
@@ -250,18 +250,18 @@ export function AdminDues() {
               const value = Number(e.target.value)
               if (Number.isInteger(value) && value >= 2000 && value <= 2100) setYear(value)
             }}
-            className="mt-1 w-28 rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+            className="mt-1 w-28 rounded-xl px-3 py-2 text-sm field"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-sambo-900" htmlFor="month">
+          <label className="block text-sm font-medium text-ink" htmlFor="month">
             Mois
           </label>
           <select
             id="month"
             value={month}
             onChange={(e) => setMonth(Number(e.target.value))}
-            className="mt-1 rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+            className="mt-1 rounded-xl px-3 py-2 text-sm field"
           >
             {MONTH_NAMES.map((name, i) => (
               <option key={name} value={i + 1}>
@@ -271,7 +271,7 @@ export function AdminDues() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-sambo-900" htmlFor="rule_amount">
+          <label className="block text-sm font-medium text-ink" htmlFor="rule_amount">
             Montant du mois (Ar)
           </label>
           <div className="mt-1 flex gap-2">
@@ -281,19 +281,19 @@ export function AdminDues() {
               value={ruleAmount}
               onChange={(e) => setRuleAmount(e.target.value)}
               placeholder={String(DEFAULT_DUES_AMOUNT)}
-              className="w-32 rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+              className="w-32 rounded-xl px-3 py-2 text-sm field"
             />
             <button
               type="button"
               onClick={saveRule}
               disabled={savingRule}
-              className="rounded-xl bg-sambo-700 px-4 py-2 text-sm font-medium text-white hover:bg-sambo-800 disabled:opacity-60"
+              className="rounded-xl btn-primary px-4 py-2 text-sm disabled:opacity-60"
             >
               {savingRule ? '…' : 'Enregistrer'}
             </button>
           </div>
-          <p className="mt-1 text-xs text-sambo-700/60">
-            {ruleId ? 'Montant spécifique à ce mois.' : `Par défaut : ${formatAr(DEFAULT_DUES_AMOUNT)}.`} Laisser
+          <p className="mt-1 text-xs text-ink-subtle">
+            {ruleId ? 'Montant spécifique à ce mois.' : `Par défaut  ${formatAr(DEFAULT_DUES_AMOUNT)}.`} Laisser
             vide = montant par défaut, 0 = mois gratuit.
           </p>
         </div>
@@ -301,7 +301,7 @@ export function AdminDues() {
           <button
             type="button"
             onClick={exportMonth}
-            className="rounded-xl border border-sambo-200 bg-white px-4 py-2 text-sm font-medium text-sambo-800 hover:bg-sambo-50"
+            className="rounded-xl px-4 py-2 text-sm font-medium btn-glass"
           >
             Exporter le mois (CSV)
           </button>
@@ -309,19 +309,19 @@ export function AdminDues() {
             type="button"
             onClick={exportYear}
             disabled={exporting}
-            className="rounded-xl border border-sambo-200 bg-white px-4 py-2 text-sm font-medium text-sambo-800 hover:bg-sambo-50 disabled:opacity-60"
+            className="rounded-xl px-4 py-2 text-sm font-medium btn-glass disabled:opacity-60"
           >
             {exporting ? 'Export…' : `Récapitulatif ${year} (CSV)`}
           </button>
         </div>
       </div>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-4 text-sm text-danger">{error}</p>}
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-sambo-200/70 bg-white">
-        <table className="min-w-full divide-y divide-sambo-200/70 text-sm">
+      <div className="mt-6 overflow-x-auto rounded-2xl border border-line glass">
+        <table className="min-w-full divide-y divide-line text-sm">
           <thead>
-            <tr className="text-left text-xs font-semibold uppercase tracking-wide text-sambo-700/60">
+            <tr className="text-left text-xs font-semibold uppercase tracking-wide text-ink-subtle">
               <th className="px-4 py-3">Membre</th>
               <th className="px-4 py-3">Statut</th>
               <th className="px-4 py-3">Montant payé</th>
@@ -330,20 +330,20 @@ export function AdminDues() {
               <th className="px-4 py-3">Référence</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-sambo-200/70">
+          <tbody className="divide-y divide-line">
             {members.map((m) => {
               const record = recordByProfile.get(m.id)
               return (
                 <tr key={m.id}>
                   <td className="px-4 py-3">
-                    <p className="font-medium text-sambo-950">{fullName(m)}</p>
-                    {m.member_number && <p className="text-xs text-sambo-700/60">{m.member_number}</p>}
+                    <p className="font-medium text-ink">{fullName(m)}</p>
+                    {m.member_number && <p className="text-xs text-ink-subtle">{m.member_number}</p>}
                   </td>
                   <td className="px-4 py-3">
                     <select
                       value={record?.status ?? 'impaye'}
                       onChange={(e) => updateRecordField(m.id, { status: e.target.value as DuesStatus })}
-                      className="rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
+                      className="rounded-lg px-2 py-1 text-sm field"
                     >
                       {STATUS_OPTIONS.map(([value, label]) => (
                         <option key={value} value={value}>
@@ -360,7 +360,7 @@ export function AdminDues() {
                         const value = e.target.value ? Number(e.target.value) : null
                         if (value !== (record?.amount_paid ?? null)) updateRecordField(m.id, { amount_paid: value })
                       }}
-                      className="w-24 rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
+                      className="w-24 rounded-lg px-2 py-1 text-sm field"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -375,7 +375,7 @@ export function AdminDues() {
                         const value = e.target.value || null
                         if (value !== (record?.payment_date ?? null)) updateRecordField(m.id, { payment_date: value })
                       }}
-                      className="rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
+                      className="rounded-lg px-2 py-1 text-sm field"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -386,7 +386,7 @@ export function AdminDues() {
                         const value = e.target.value.trim() || null
                         if (value !== (record?.payment_method ?? null)) updateRecordField(m.id, { payment_method: value })
                       }}
-                      className="w-28 rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
+                      className="w-28 rounded-lg px-2 py-1 text-sm field"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -397,7 +397,7 @@ export function AdminDues() {
                         const value = e.target.value.trim() || null
                         if (value !== (record?.reference ?? null)) updateRecordField(m.id, { reference: value })
                       }}
-                      className="w-32 rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
+                      className="w-32 rounded-lg px-2 py-1 text-sm field"
                     />
                   </td>
                 </tr>

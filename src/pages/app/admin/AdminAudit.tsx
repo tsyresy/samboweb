@@ -225,8 +225,8 @@ export function AdminAudit() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-sambo-950">Journal d'audit</h1>
-      <p className="mt-2 text-sambo-800/70">
+      <h1 className="text-2xl font-semibold text-ink">Journal d'audit</h1>
+      <p className="mt-2 text-ink-muted">
         Qui a changé quoi, et quand : validations et rôles des membres, paiements d'adidy, montants mensuels. Le
         journal est rempli par la base de données elle-même et ne peut pas être modifié.
       </p>
@@ -240,8 +240,8 @@ export function AdminAudit() {
             aria-pressed={filter === f.value}
             className={
               filter === f.value
-                ? 'rounded-full bg-sambo-700 px-4 py-1.5 text-sm font-medium text-white'
-                : 'rounded-full border border-sambo-200 bg-white px-4 py-1.5 text-sm font-medium text-sambo-800 hover:bg-sambo-50'
+                ? 'rounded-full btn-primary px-4 py-1.5 text-sm'
+                : 'rounded-full px-4 py-1.5 text-sm font-medium btn-glass'
             }
           >
             {f.label}
@@ -249,36 +249,36 @@ export function AdminAudit() {
         ))}
       </div>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-4 text-sm text-danger">{error}</p>}
 
       {loading ? (
-        <p className="mt-6 text-sambo-700/60">Chargement…</p>
+        <p className="mt-6 text-ink-subtle">Chargement…</p>
       ) : rows.length === 0 ? (
-        <p className="mt-6 rounded-2xl border border-dashed border-sambo-200 bg-white p-6 text-sm text-sambo-700/70">
+        <p className="mt-6 rounded-2xl border border-dashed border-line glass p-6 text-sm text-ink-muted">
           Aucune entrée pour ce filtre.
         </p>
       ) : (
-        <ol className="mt-6 divide-y divide-sambo-200/70 rounded-2xl border border-sambo-200/70 bg-white">
+        <ol className="mt-6 divide-y divide-line rounded-2xl border border-line glass">
           {rows.map((row) => {
             const changes = changesOf(row)
             const actor = row.actor_user_id ? byUser[row.actor_user_id] : undefined
             return (
               <li key={row.id} className="px-4 py-3 sm:px-5">
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-                  <p className="text-sm text-sambo-900">
+                  <p className="text-sm text-ink">
                     <strong>{row.actor_user_id ? personName(actor) : 'Système'}</strong> {describe(row)}
                   </p>
-                  <time dateTime={row.created_at} className="shrink-0 text-xs tabular-nums text-sambo-700/60">
+                  <time dateTime={row.created_at} className="shrink-0 text-xs tabular-nums text-ink-subtle">
                     {new Date(row.created_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
                   </time>
                 </div>
                 {changes.length > 0 && (
-                  <ul className="mt-1.5 space-y-0.5 text-sm text-sambo-800/80">
+                  <ul className="mt-1.5 space-y-0.5 text-sm text-ink-muted">
                     {changes.map(([field, change]) => (
                       <li key={field} className="break-words">
-                        <span className="text-sambo-700/60">{FIELD_LABELS[field] ?? field} :</span>{' '}
+                        <span className="text-ink-subtle">{FIELD_LABELS[field] ?? field} :</span>{' '}
                         {formatValue(row.target_table, field, change.from)} →{' '}
-                        <span className="font-medium text-sambo-950">{formatValue(row.target_table, field, change.to)}</span>
+                        <span className="font-medium text-ink">{formatValue(row.target_table, field, change.to)}</span>
                       </li>
                     ))}
                   </ul>
@@ -294,7 +294,7 @@ export function AdminAudit() {
           type="button"
           onClick={loadMore}
           disabled={loadingMore}
-          className="mt-4 rounded-xl border border-sambo-200 bg-white px-4 py-2 text-sm font-medium text-sambo-800 hover:bg-sambo-50 disabled:opacity-60"
+          className="mt-4 rounded-xl px-4 py-2 text-sm font-medium btn-glass disabled:opacity-60"
         >
           {loadingMore ? 'Chargement…' : 'Afficher plus'}
         </button>

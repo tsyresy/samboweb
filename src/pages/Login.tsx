@@ -28,12 +28,12 @@ export function Login() {
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-semibold text-sambo-950">Connexion</h1>
-      <p className="mt-2 text-sm text-sambo-800/70">Accédez à votre espace membre SAMBO.</p>
+      <h1 className="text-3xl font-semibold text-ink">Connexion</h1>
+      <p className="mt-2 text-sm text-ink-muted">Accédez à votre espace membre SAMBO.</p>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+      <form onSubmit={handleSubmit} className="glass mt-8 space-y-4 rounded-3xl p-6 sm:p-8">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-sambo-900">
+          <label htmlFor="email" className="block text-sm font-medium text-ink">
             Email
           </label>
           <input
@@ -41,12 +41,12 @@ export function Login() {
             name="email"
             type="email"
             required
-            className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+            className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-sambo-900">
+          <label htmlFor="password" className="block text-sm font-medium text-ink">
             Mot de passe
           </label>
           <input
@@ -54,24 +54,24 @@ export function Login() {
             name="password"
             type="password"
             required
-            className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+            className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-sambo-700 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-sambo-800 disabled:opacity-60"
+          className="w-full rounded-xl btn-primary px-4 py-3 text-sm disabled:opacity-60"
         >
           {loading ? 'Connexion…' : 'Se connecter'}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-sambo-800/70">
+      <p className="mt-6 text-center text-sm text-ink-muted">
         Pas encore membre ?{' '}
-        <Link to="/inscription" className="font-medium text-sambo-700 hover:underline">
+        <Link to="/inscription" className="font-medium text-accent hover:underline">
           Inscrivez-vous
         </Link>
       </p>

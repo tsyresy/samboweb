@@ -7,12 +7,12 @@ import type { MembershipCategory } from '@/types'
 import { CATEGORY_LABELS } from '@/lib/membership'
 
 const STRENGTH_LEVELS = [
-  { label: 'Trop court', barColor: 'bg-red-500', textColor: 'text-red-600' },
-  { label: 'Faible', barColor: 'bg-red-500', textColor: 'text-red-600' },
-  { label: 'Moyen', barColor: 'bg-gold-500', textColor: 'text-gold-600' },
-  { label: 'Correct', barColor: 'bg-gold-400', textColor: 'text-gold-600' },
-  { label: 'Fort', barColor: 'bg-sambo-500', textColor: 'text-sambo-700' },
-  { label: 'Très fort', barColor: 'bg-sambo-700', textColor: 'text-sambo-700' },
+  { label: 'Trop court', barColor: 'bg-red-500', textColor: 'text-danger' },
+  { label: 'Faible', barColor: 'bg-red-500', textColor: 'text-danger' },
+  { label: 'Moyen', barColor: 'bg-gold-500', textColor: 'text-gold-300' },
+  { label: 'Correct', barColor: 'bg-gold-400', textColor: 'text-gold-300' },
+  { label: 'Fort', barColor: 'bg-sambo-500', textColor: 'text-accent' },
+  { label: 'Très fort', barColor: 'bg-accent', textColor: 'text-accent' },
 ]
 
 function getPasswordStrength(password: string) {
@@ -150,20 +150,20 @@ export function Register() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-semibold text-sambo-950">Rejoindre SAMBO</h1>
-      <p className="mt-3 text-sambo-800/80">
+      <h1 className="text-3xl font-semibold text-ink">Rejoindre SAMBO</h1>
+      <p className="mt-3 text-ink-muted">
         Votre demande sera examinée par un administrateur avant l'activation de votre accès
         membre.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-8">
+      <form onSubmit={handleSubmit} className="glass mt-8 space-y-8 rounded-3xl p-6 sm:p-8">
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Catégorie souhaitée</legend>
+          <legend className="text-lg font-medium text-ink">Catégorie souhaitée</legend>
           <select
             name="category"
             required
             defaultValue=""
-            className="w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+            className="w-full rounded-xl px-3 py-2 text-sm field"
           >
             <option value="" disabled>
               Choisissez une catégorie
@@ -177,14 +177,14 @@ export function Register() {
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Identité</legend>
+          <legend className="text-lg font-medium text-ink">Identité</legend>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Nom" name="last_name" required />
             <Field label="Prénom(s)" name="first_names" required />
             <Field label="Numéro CIN" name="cin_number" required />
             <Field label="Surnom / nom de guerre" name="nickname" />
             <div>
-              <label htmlFor="birth_date" className="block text-sm font-medium text-sambo-900">
+              <label htmlFor="birth_date" className="block text-sm font-medium text-ink">
                 Date de naissance
               </label>
               <div className="relative mt-1">
@@ -196,7 +196,7 @@ export function Register() {
                   value={birthDateDisplay}
                   onChange={(e) => setBirthDateDisplay(formatDateInput(e.target.value))}
                   maxLength={10}
-                  className="w-full rounded-xl border border-sambo-200 py-2 pl-3 pr-10 text-sm focus:border-sambo-500 focus:outline-none"
+                  className="w-full rounded-xl py-2 pl-3 pr-10 text-sm field"
                 />
                 <button
                   type="button"
@@ -207,7 +207,7 @@ export function Register() {
                     if (typeof el.showPicker === 'function') el.showPicker()
                     else el.focus()
                   }}
-                  className="absolute inset-y-0 right-0 flex w-9 items-center justify-center text-sambo-500 hover:text-sambo-700"
+                  className="absolute inset-y-0 right-0 flex w-9 items-center justify-center text-accent hover:text-accent"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <rect x="4" y="5.5" width="16" height="15" rx="2" />
@@ -238,7 +238,7 @@ export function Register() {
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Contact</legend>
+          <legend className="text-lg font-medium text-ink">Contact</legend>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Téléphone" name="phone" type="tel" required />
             <Field label="Second téléphone (facultatif)" name="phone_secondary" type="tel" />
@@ -247,10 +247,10 @@ export function Register() {
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Accès</legend>
+          <legend className="text-lg font-medium text-ink">Accès</legend>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-sambo-900">
+            <label htmlFor="password" className="block text-sm font-medium text-ink">
               Mot de passe (8 caractères minimum)
             </label>
             <input
@@ -260,7 +260,7 @@ export function Register() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+              className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
             />
 
             {password && (
@@ -270,7 +270,7 @@ export function Register() {
                     <div
                       key={level.label}
                       className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                        i < strength.score ? strength.barColor : 'bg-sambo-100'
+                        i < strength.score ? strength.barColor : 'bg-white/10'
                       }`}
                     />
                   ))}
@@ -283,7 +283,7 @@ export function Register() {
           </div>
 
           <div>
-            <label htmlFor="password_confirm" className="block text-sm font-medium text-sambo-900">
+            <label htmlFor="password_confirm" className="block text-sm font-medium text-ink">
               Confirmer le mot de passe
             </label>
             <input
@@ -292,14 +292,14 @@ export function Register() {
               required
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+              className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
             />
 
             {passwordConfirm && (
               <p
                 key={passwordsMatch ? 'match' : 'mismatch'}
                 className={`animate-pop-in mt-1 flex items-center gap-1.5 text-xs ${
-                  passwordsMatch ? 'text-sambo-700' : 'text-red-600'
+                  passwordsMatch ? 'text-accent' : 'text-danger'
                 }`}
               >
                 {passwordsMatch ? (
@@ -318,13 +318,13 @@ export function Register() {
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Résidence</legend>
+          <legend className="text-lg font-medium text-ink">Résidence</legend>
           <Field label="Adresse ou quartier de résidence" name="residence" required />
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Études</legend>
-          <label className="flex items-center gap-2 text-sm text-sambo-800/80">
+          <legend className="text-lg font-medium text-ink">Études</legend>
+          <label className="flex items-center gap-2 text-sm text-ink-muted">
             <input
               type="checkbox"
               checked={!stillStudying}
@@ -336,13 +336,13 @@ export function Register() {
           {stillStudying && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-sambo-900">Faculté / établissement</label>
+                <label className="block text-sm font-medium text-ink">Faculté / établissement</label>
                 <select
                   name="faculty"
                   required={stillStudying}
                   value={establishment}
                   onChange={(e) => setEstablishment(e.target.value)}
-                  className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                  className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
                 >
                   <option value="" disabled>
                     Choisissez un établissement
@@ -356,13 +356,13 @@ export function Register() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-sambo-900">Mention / parcours</label>
+                <label className="block text-sm font-medium text-ink">Mention / parcours</label>
                 <select
                   name="program"
                   required={stillStudying}
                   disabled={!establishment}
                   defaultValue=""
-                  className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none disabled:bg-sambo-100"
+                  className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
                 >
                   <option value="" disabled>
                     {establishment ? 'Choisissez une mention' : "Sélectionnez d'abord un établissement"}
@@ -376,12 +376,12 @@ export function Register() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-sambo-900">Niveau d'étude</label>
+                <label className="block text-sm font-medium text-ink">Niveau d'étude</label>
                 <select
                   name="study_level"
                   required={stillStudying}
                   defaultValue=""
-                  className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                  className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
                 >
                   <option value="" disabled>
                     Choisissez un niveau
@@ -400,7 +400,7 @@ export function Register() {
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Contact d'urgence</legend>
+          <legend className="text-lg font-medium text-ink">Contact d'urgence</legend>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="Nom du contact familial" name="emergency_contact_name" required />
             <Field
@@ -413,20 +413,20 @@ export function Register() {
         </fieldset>
 
         <fieldset className="space-y-3">
-          <legend className="text-lg font-medium text-sambo-900">Photo</legend>
-          <p className="text-sm text-sambo-800/70">
+          <legend className="text-lg font-medium text-ink">Photo</legend>
+          <p className="text-sm text-ink-muted">
             Portrait de face récent, sans filtre ni accessoire masquant le visage.
           </p>
 
           <label
             htmlFor="photo"
-            className="flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-sambo-300 bg-sambo-50 px-6 py-8 text-center transition-colors hover:border-sambo-500 hover:bg-sambo-100"
+            className="flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-line-strong bg-white/[0.04] px-6 py-8 text-center transition-colors hover:border-accent hover:bg-white/10"
           >
             {photoPreview ? (
               <img
                 src={photoPreview}
                 alt="Aperçu"
-                className="h-24 w-24 rounded-full border border-sambo-200 object-cover"
+                className="h-24 w-24 rounded-full border border-line object-cover"
               />
             ) : (
               <svg
@@ -436,44 +436,44 @@ export function Register() {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"
-                className="text-sambo-500"
+                className="text-accent"
               >
                 <path d="M4 8a1 1 0 0 1 1-1h2.5l1-1.5h7l1 1.5H19a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V8Z" />
                 <circle cx="12" cy="13" r="3.5" />
               </svg>
             )}
-            <span className="text-sm font-medium text-sambo-700">
+            <span className="text-sm font-medium text-accent">
               {photoPreview ? 'Changer la photo' : 'Cliquez pour ajouter une photo'}
             </span>
           </label>
           <input id="photo" type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
 
-          <p className="text-xs text-sambo-700/60">
+          <p className="text-xs text-ink-subtle">
             La photo est envoyée avec votre inscription. Vous pourrez la changer depuis votre
             profil une fois connecté(e).
           </p>
         </fieldset>
 
-        <label className="flex items-start gap-2 text-sm text-sambo-800/80">
+        <label className="flex items-start gap-2 text-sm text-ink-muted">
           <input type="checkbox" required className="mt-1" />
           J'accepte les règles d'utilisation et je suis informé(e) de l'usage fait de mes données
           personnelles.
         </label>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-sambo-700 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-sambo-800 disabled:opacity-60"
+          className="w-full rounded-xl btn-primary px-4 py-3 text-sm disabled:opacity-60"
         >
           {loading ? 'Envoi…' : 'Envoyer ma demande'}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-sambo-800/70">
+      <p className="mt-6 text-center text-sm text-ink-muted">
         Déjà membre ?{' '}
-        <Link to="/connexion" className="font-medium text-sambo-700 hover:underline">
+        <Link to="/connexion" className="font-medium text-accent hover:underline">
           Connectez-vous
         </Link>
       </p>
@@ -496,7 +496,7 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label htmlFor={name} className="block text-sm font-medium text-sambo-900">
+      <label htmlFor={name} className="block text-sm font-medium text-ink">
         {label}
       </label>
       <input
@@ -504,7 +504,7 @@ function Field({
         name={name}
         type={type}
         required={required}
-        className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+        className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
       />
     </div>
   )

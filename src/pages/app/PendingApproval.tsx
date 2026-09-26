@@ -11,16 +11,16 @@ export function PendingApproval() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-sambo-50 px-4 text-center">
-      <h1 className="text-2xl font-semibold text-sambo-950">Demande en cours d'examen</h1>
-      <p className="mt-3 max-w-md text-sambo-800/80">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white/[0.04] px-4 text-center">
+      <h1 className="text-2xl font-semibold text-ink">Demande en cours d'examen</h1>
+      <p className="mt-3 max-w-md text-ink-muted">
         Votre compte a bien été créé. Un administrateur doit encore valider votre adhésion avant
         que vous puissiez accéder à l'espace membre.
       </p>
       <button
         type="button"
         onClick={handleSignOut}
-        className="mt-6 rounded-full border border-sambo-300 px-5 py-2 text-sm font-medium text-sambo-900 hover:bg-sambo-100"
+        className="mt-6 rounded-full px-5 py-2 text-sm font-medium btn-glass"
       >
         Se déconnecter
       </button>

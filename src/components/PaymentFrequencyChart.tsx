@@ -6,12 +6,12 @@ const MONTH_NAMES = [
   'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
 ]
 
-// sambo-500: the brand green that clears the chroma floor for a data mark
-// (sambo-700, the UI accent, reads gray as a fill).
-const BAR = '#3d8a5f'
-const BAR_HOVER = '#5fae7f'
-const GRID = '#e4ece7'
-const INK_MUTED = '#5b6f63'
+// Dark theme: the bright brand green (accent-strong) reads as a solid data
+// mark on the green-black gradient; darker greens sink into it.
+const BAR = '#3fc27f'
+const BAR_HOVER = '#8ae6b1'
+const GRID = 'rgb(255 255 255 / 0.08)'
+const INK_MUTED = '#a9bdb1'
 
 const HEIGHT = 220
 const PAD = { top: 16, right: 8, bottom: 28, left: 28 }
@@ -120,18 +120,18 @@ export function PaymentFrequencyChart() {
   const xLabels = [1, 5, 10, 15, 20, 25, daysInMonth]
 
   return (
-    <section className="rounded-3xl border border-sambo-200/70 bg-white p-5 shadow-sm">
+    <section className="rounded-3xl border border-line glass p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-sambo-950">Paiements de l'adidy de {monthLabel}</h2>
-          <p className="text-sm text-sambo-700/70">Nombre de membres ayant payé, jour par jour</p>
+          <h2 className="text-lg font-semibold text-ink">Paiements de l'adidy de {monthLabel}</h2>
+          <p className="text-sm text-ink-muted">Nombre de membres ayant payé, jour par jour</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => shiftMonth(-1)}
             aria-label="Mois précédent"
-            className="rounded-full border border-sambo-200 px-3 py-1 text-sm text-sambo-900 hover:bg-sambo-100"
+            className="rounded-full px-3 py-1 text-sm btn-glass"
           >
             ←
           </button>
@@ -140,7 +140,7 @@ export function PaymentFrequencyChart() {
             onClick={() => shiftMonth(1)}
             disabled={isCurrentMonth}
             aria-label="Mois suivant"
-            className="rounded-full border border-sambo-200 px-3 py-1 text-sm text-sambo-900 hover:bg-sambo-100 disabled:opacity-40"
+            className="rounded-full px-3 py-1 text-sm btn-glass disabled:opacity-40"
           >
             →
           </button>
@@ -148,15 +148,15 @@ export function PaymentFrequencyChart() {
       </div>
 
       <div className={`mt-4 transition-opacity ${data ? '' : 'opacity-40'}`}>
-        <p className="text-sm text-sambo-800">
-          <span className="text-3xl font-bold text-sambo-950 tabular-nums">{total}</span>
+        <p className="text-sm text-ink-muted">
+          <span className="text-3xl font-bold text-ink tabular-nums">{total}</span>
           <span className="ml-2">
             membre{total > 1 ? 's' : ''} sur {data?.members ?? '…'} {total > 1 ? 'ont' : 'a'} payé
             {data && data.members > 0 && ` · ${Math.round((total / data.members) * 100)} %`}
           </span>
         </p>
         {data && data.outsideMonth > 0 && (
-          <p className="mt-0.5 text-xs text-sambo-700/70">
+          <p className="mt-0.5 text-xs text-ink-muted">
             dont {data.outsideMonth} réglé{data.outsideMonth > 1 ? 's' : ''} en dehors du mois (non
             représenté{data.outsideMonth > 1 ? 's' : ''} sur le graphique)
           </p>
@@ -200,7 +200,7 @@ export function PaymentFrequencyChart() {
                     height={plotH}
                     fill="transparent"
                     tabIndex={d.payers > 0 ? 0 : -1}
-                    aria-label={`${d.day} ${MONTH_NAMES[period.month - 1]} : ${d.payers} paiement${d.payers > 1 ? 's' : ''}`}
+                    aria-label={`${d.day} ${MONTH_NAMES[period.month - 1]}  ${d.payers} paiement${d.payers > 1 ? 's' : ''}`}
                     onPointerEnter={() => setHover(d)}
                     onFocus={() => setHover(d)}
                     onBlur={() => setHover(null)}
@@ -215,7 +215,7 @@ export function PaymentFrequencyChart() {
               x2={width - PAD.right}
               y1={PAD.top + plotH}
               y2={PAD.top + plotH}
-              stroke="#c1d3c8"
+              stroke="rgb(255 255 255 / 0.25)"
               strokeWidth={1}
             />
             {xLabels.map((day) => (
@@ -235,23 +235,23 @@ export function PaymentFrequencyChart() {
 
         {hover && width > 0 && (
           <div
-            className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-lg border border-sambo-200 bg-white px-3 py-2 text-xs whitespace-nowrap shadow-md"
+            className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-lg border glass-strong px-3 py-2 text-xs whitespace-nowrap"
             style={{
               left: Math.min(Math.max(PAD.left + band * (hover.day - 1) + band / 2, 60), width - 60),
               top: 0,
             }}
           >
-            <p className="text-base font-semibold text-sambo-950 tabular-nums">
+            <p className="text-base font-semibold text-ink tabular-nums">
               {hover.payers} paiement{hover.payers > 1 ? 's' : ''}
             </p>
-            <p className="text-sambo-700/70">
+            <p className="text-ink-muted">
               {hover.day} {MONTH_NAMES[period.month - 1]}
             </p>
           </div>
         )}
 
         {data && data.inMonth === 0 && (
-          <p className="absolute inset-x-0 top-16 text-center text-sm text-sambo-700/60">
+          <p className="absolute inset-x-0 top-16 text-center text-sm text-ink-subtle">
             Aucun paiement enregistré ce mois-ci pour l'instant.
           </p>
         )}
@@ -259,12 +259,12 @@ export function PaymentFrequencyChart() {
 
       {data && data.inMonth > 0 && (
         <details className="mt-3 text-sm">
-          <summary className="cursor-pointer text-xs text-sambo-700/70 hover:text-sambo-900">
+          <summary className="cursor-pointer text-xs text-ink-muted hover:text-ink">
             Voir les données en tableau
           </summary>
           <table className="mt-2 w-full max-w-xs text-left text-xs">
             <thead>
-              <tr className="text-sambo-700/60">
+              <tr className="text-ink-subtle">
                 <th className="py-1 font-medium">Jour</th>
                 <th className="py-1 text-right font-medium">Paiements</th>
               </tr>
@@ -273,11 +273,11 @@ export function PaymentFrequencyChart() {
               {data.days
                 .filter((d) => d.payers > 0)
                 .map((d) => (
-                  <tr key={d.day} className="border-t border-sambo-100">
-                    <td className="py-1 text-sambo-900">
+                  <tr key={d.day} className="border-t border-line">
+                    <td className="py-1 text-ink">
                       {d.day} {MONTH_NAMES[period.month - 1]}
                     </td>
-                    <td className="py-1 text-right text-sambo-950 tabular-nums">{d.payers}</td>
+                    <td className="py-1 text-right text-ink tabular-nums">{d.payers}</td>
                   </tr>
                 ))}
             </tbody>

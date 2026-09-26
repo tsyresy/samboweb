@@ -37,40 +37,40 @@ export function Verify() {
       <img src="/sambo-logo.png" alt="SAMBO" className="mb-6 h-16 w-16 rounded-full object-cover" />
 
       {loading ? (
-        <p className="text-sambo-700/60">Vérification…</p>
+        <p className="text-ink-subtle">Vérification…</p>
       ) : error ? (
         <>
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-3xl text-red-600">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/15 text-3xl text-danger">
             !
           </div>
-          <h1 className="mt-4 text-xl font-semibold text-sambo-950">Erreur de vérification</h1>
-          <p className="mt-2 text-sambo-800/70">Réessayez dans un instant.</p>
+          <h1 className="mt-4 text-xl font-semibold text-ink">Erreur de vérification</h1>
+          <p className="mt-2 text-ink-muted">Réessayez dans un instant.</p>
         </>
       ) : result === 'not_found' ? (
         <>
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-3xl text-red-600">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/15 text-3xl text-danger">
             ✕
           </div>
-          <h1 className="mt-4 text-xl font-semibold text-sambo-950">Carte introuvable</h1>
-          <p className="mt-2 text-sambo-800/70">Ce code ne correspond à aucune carte SAMBO.</p>
+          <h1 className="mt-4 text-xl font-semibold text-ink">Carte introuvable</h1>
+          <p className="mt-2 text-ink-muted">Ce code ne correspond à aucune carte SAMBO.</p>
         </>
       ) : result?.card_status === 'active' ? (
         <>
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sambo-100 text-3xl text-sambo-700">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 text-3xl text-accent">
             ✓
           </div>
-          <h1 className="mt-4 text-xl font-semibold text-sambo-950">Carte valide</h1>
-          <p className="mt-2 text-sambo-800/70">
+          <h1 className="mt-4 text-xl font-semibold text-ink">Carte valide</h1>
+          <p className="mt-2 text-ink-muted">
             {result.member_number} — {categoryLabel(result.category)}
           </p>
         </>
       ) : (
         <>
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-3xl text-red-600">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/15 text-3xl text-danger">
             ✕
           </div>
-          <h1 className="mt-4 text-xl font-semibold text-sambo-950">Carte révoquée</h1>
-          <p className="mt-2 text-sambo-800/70">Cette carte n'est plus valide.</p>
+          <h1 className="mt-4 text-xl font-semibold text-ink">Carte révoquée</h1>
+          <p className="mt-2 text-ink-muted">Cette carte n'est plus valide.</p>
         </>
       )}
     </div>

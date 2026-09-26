@@ -46,7 +46,7 @@ function Avatar({ member, size, online }: { member: MemberInfo | undefined; size
       {member?.photo_url ? (
         <img src={member.photo_url} alt="" className="h-full w-full rounded-full object-cover" />
       ) : (
-        <div className="flex h-full w-full items-center justify-center rounded-full bg-sambo-100 font-semibold text-sambo-700">
+        <div className="flex h-full w-full items-center justify-center rounded-full bg-white/10 font-semibold text-accent">
           {memberName(member).charAt(0)}
         </div>
       )}
@@ -163,15 +163,15 @@ export function Chat() {
     else setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, status } : m)))
   }
 
-  if (!profile || loading) return <p className="text-sambo-700/60">Chargement…</p>
+  if (!profile || loading) return <p className="text-ink-subtle">Chargement…</p>
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
-      <section className="flex h-[calc(100dvh-4rem)] min-h-[32rem] flex-col overflow-hidden rounded-3xl border border-sambo-200/70 bg-white shadow-sm">
-        <header className="flex flex-wrap items-center gap-3 border-b border-sambo-100 px-5 py-4">
+      <section className="flex h-[calc(100dvh-4rem)] min-h-[32rem] flex-col overflow-hidden rounded-3xl border border-line glass">
+        <header className="flex flex-wrap items-center gap-3 border-b border-line px-5 py-4">
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl font-semibold text-sambo-950">Chat SAMBO</h1>
-            <p className="text-xs text-sambo-700/60">
+            <h1 className="text-xl font-semibold text-ink">Chat SAMBO</h1>
+            <p className="text-xs text-ink-subtle">
               {onlineCount} en ligne · {memberList.length} membres
             </p>
           </div>
@@ -179,7 +179,7 @@ export function Chat() {
             type="button"
             disabled
             title="Les appels vidéo de groupe arriveront avec l'application mobile."
-            className="flex cursor-not-allowed items-center gap-2 rounded-full border border-sambo-200 px-4 py-2 text-sm font-medium text-sambo-700/60"
+            className="flex cursor-not-allowed items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-medium text-ink-subtle"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden>
               <path d="m22 8-6 4 6 4V8Z" />
@@ -190,19 +190,19 @@ export function Chat() {
         </header>
 
         {/* Member bubbles */}
-        <div className="flex gap-3 overflow-x-auto border-b border-sambo-100 px-5 py-3">
+        <div className="flex gap-3 overflow-x-auto border-b border-line px-5 py-3">
           {memberList.map((m) => (
             <div key={m.id} className="flex w-14 shrink-0 flex-col items-center gap-1" title={memberName(m)}>
               <Avatar member={m} size="h-12 w-12" online={online.has(m.id)} />
-              <span className="w-full truncate text-center text-[11px] text-sambo-800/80">{shortName(m)}</span>
+              <span className="w-full truncate text-center text-[11px] text-ink-muted">{shortName(m)}</span>
             </div>
           ))}
         </div>
 
         {/* Messages */}
-        <div className="flex-1 space-y-3 overflow-y-auto bg-sambo-50/50 px-4 py-4">
+        <div className="flex-1 space-y-3 overflow-y-auto bg-white/[0.03] px-4 py-4">
           {messages.length === 0 && (
-            <p className="py-10 text-center text-sm text-sambo-700/60">
+            <p className="py-10 text-center text-sm text-ink-subtle">
               Aucun message pour l'instant. Lancez la conversation !
             </p>
           )}
@@ -218,7 +218,7 @@ export function Chat() {
             return (
               <div key={msg.id}>
                 {newDay && (
-                  <p className="my-4 text-center text-xs font-medium text-sambo-700/50 first-letter:uppercase">
+                  <p className="my-4 text-center text-xs font-medium text-ink-subtle first-letter:uppercase">
                     {formatDay(msg.created_at)}
                   </p>
                 )}
@@ -231,20 +231,20 @@ export function Chat() {
                     ))}
                   <div className={`max-w-[75%] ${hidden ? 'opacity-50' : ''}`}>
                     {!mine && !sameAuthorAsPrevious && (
-                      <p className="mb-0.5 ml-3 text-xs font-medium text-sambo-800/80">{memberName(author)}</p>
+                      <p className="mb-0.5 ml-3 text-xs font-medium text-ink-muted">{memberName(author)}</p>
                     )}
                     <div
                       className={`rounded-2xl px-3.5 py-2 text-sm whitespace-pre-line break-words ${
-                        mine ? 'rounded-br-md bg-sambo-700 text-white' : 'rounded-bl-md bg-white text-sambo-950 shadow-sm'
+                        mine ? 'rounded-br-md bg-accent-strong text-on-accent' : 'rounded-bl-md bg-white/10 text-ink'
                       }`}
                     >
                       {msg.content}
                     </div>
                     <div
-                      className={`mt-0.5 flex gap-3 px-2 text-[11px] text-sambo-700/50 ${mine ? 'justify-end' : ''}`}
+                      className={`mt-0.5 flex gap-3 px-2 text-[11px] text-ink-subtle ${mine ? 'justify-end' : ''}`}
                     >
                       <span>{formatTime(msg.created_at)}</span>
-                      {hidden && <span className="text-red-600">masqué</span>}
+                      {hidden && <span className="text-danger">masqué</span>}
                       {mine && (
                         <button
                           type="button"
@@ -272,9 +272,9 @@ export function Chat() {
           <div ref={bottomRef} />
         </div>
 
-        {error && <p className="px-5 pt-2 text-sm text-red-600">{error}</p>}
+        {error && <p className="px-5 pt-2 text-sm text-danger">{error}</p>}
 
-        <form onSubmit={send} className="flex items-end gap-2 border-t border-sambo-100 p-3">
+        <form onSubmit={send} className="flex items-end gap-2 border-t border-line p-3">
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
@@ -282,12 +282,12 @@ export function Chat() {
             placeholder="Écrire un message…"
             rows={1}
             maxLength={2000}
-            className="max-h-32 min-h-10 flex-1 resize-none rounded-2xl border border-sambo-200 px-4 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+            className="max-h-32 min-h-10 flex-1 resize-none rounded-2xl px-4 py-2 text-sm field"
           />
           <button
             type="submit"
             disabled={sending || !draft.trim()}
-            className="rounded-full bg-sambo-700 px-5 py-2 text-sm font-medium text-white hover:bg-sambo-800 disabled:opacity-60"
+            className="rounded-full btn-primary px-5 py-2 text-sm disabled:opacity-60"
           >
             Envoyer
           </button>

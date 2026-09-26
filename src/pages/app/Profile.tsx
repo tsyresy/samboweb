@@ -66,7 +66,7 @@ export function Profile() {
   }, [profile])
 
   if (!profile || loading) {
-    return <p className="text-sambo-700/60">Chargement…</p>
+    return <p className="text-ink-subtle">Chargement…</p>
   }
 
   const mentions = UNIVERSITY_ESTABLISHMENTS.find((e) => e.name === form.faculty)?.mentions ?? []
@@ -143,29 +143,29 @@ export function Profile() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-semibold text-sambo-950">Mon profil</h1>
+      <h1 className="text-2xl font-semibold text-ink">Mon profil</h1>
 
-      <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2 rounded-2xl border border-sambo-200/70 bg-white p-5 text-sm">
+      <div className="mt-4 flex flex-wrap gap-x-8 gap-y-2 rounded-2xl border border-line glass p-5 text-sm">
         <div>
-          <p className="text-sambo-700/60">Numéro de membre</p>
-          <p className="font-medium text-sambo-950">{profile.member_number ?? '—'}</p>
+          <p className="text-ink-subtle">Numéro de membre</p>
+          <p className="font-medium text-ink">{profile.member_number ?? '—'}</p>
         </div>
         <div>
-          <p className="text-sambo-700/60">Catégorie</p>
-          <p className="font-medium text-sambo-950">{CATEGORY_LABELS[profile.category]}</p>
+          <p className="text-ink-subtle">Catégorie</p>
+          <p className="font-medium text-ink">{CATEGORY_LABELS[profile.category]}</p>
         </div>
         <div>
-          <p className="text-sambo-700/60">Statut</p>
-          <p className="font-medium text-sambo-950">{VALIDATION_STATUS_LABELS[profile.status]}</p>
+          <p className="text-ink-subtle">Statut</p>
+          <p className="font-medium text-ink">{VALIDATION_STATUS_LABELS[profile.status]}</p>
         </div>
       </div>
 
       {profile.status === 'valide' ? (
-        <Link to="/app/carte" className="mt-4 inline-block text-sm font-medium text-sambo-700 hover:underline">
+        <Link to="/app/carte" className="mt-4 inline-block text-sm font-medium text-accent hover:underline">
           Voir ma carte de membre →
         </Link>
       ) : (
-        <p className="mt-4 text-sm text-sambo-700/60">
+        <p className="mt-4 text-sm text-ink-subtle">
           Carte de membre disponible une fois votre adhésion validée.
         </p>
       )}
@@ -174,14 +174,14 @@ export function Profile() {
         {photoUrl ? (
           <img src={photoUrl} alt="" className="h-20 w-20 rounded-full object-cover" />
         ) : (
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-sambo-100 text-2xl font-semibold text-sambo-700">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/10 text-2xl font-semibold text-accent">
             {(profile.first_names ?? profile.email ?? '?').charAt(0)}
           </div>
         )}
         <div>
           <label
             htmlFor="photo"
-            className="inline-block cursor-pointer rounded-lg border border-sambo-200 px-3 py-1.5 text-sm font-medium text-sambo-900 hover:bg-sambo-100"
+            className="inline-block cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium btn-glass"
           >
             {uploadingPhoto ? 'Envoi…' : 'Changer ma photo'}
           </label>
@@ -193,47 +193,47 @@ export function Profile() {
             onChange={handlePhotoChange}
             className="hidden"
           />
-          <p className="mt-1 text-xs text-sambo-700/60">
+          <p className="mt-1 text-xs text-ink-subtle">
             Portrait de face récent, sans filtre ni accessoire masquant le visage.
           </p>
-          {photoError && <p className="mt-1 text-xs text-red-600">{photoError}</p>}
+          {photoError && <p className="mt-1 text-xs text-danger">{photoError}</p>}
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+      <form onSubmit={handleSubmit} className="glass mt-8 space-y-6 rounded-3xl p-6 sm:p-8">
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Identité</legend>
+          <legend className="text-lg font-medium text-ink">Identité</legend>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-sambo-900" htmlFor="nickname">
+              <label className="block text-sm font-medium text-ink" htmlFor="nickname">
                 Surnom / nom de guerre
               </label>
               <input
                 id="nickname"
                 value={form.nickname}
                 onChange={(e) => setForm((f) => ({ ...f, nickname: e.target.value }))}
-                className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-sambo-900" htmlFor="cin_number">
+              <label className="block text-sm font-medium text-ink" htmlFor="cin_number">
                 Numéro CIN
               </label>
               <input
                 id="cin_number"
                 value={form.cin_number}
                 onChange={(e) => setForm((f) => ({ ...f, cin_number: e.target.value }))}
-                className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
               />
             </div>
           </div>
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Contact</legend>
+          <legend className="text-lg font-medium text-ink">Contact</legend>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-sambo-900" htmlFor="phone">
+              <label className="block text-sm font-medium text-ink" htmlFor="phone">
                 Téléphone
               </label>
               <input
@@ -241,26 +241,26 @@ export function Profile() {
                 required
                 value={form.phone}
                 onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-                className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-sambo-900" htmlFor="phone_secondary">
+              <label className="block text-sm font-medium text-ink" htmlFor="phone_secondary">
                 Second téléphone
               </label>
               <input
                 id="phone_secondary"
                 value={form.phone_secondary}
                 onChange={(e) => setForm((f) => ({ ...f, phone_secondary: e.target.value }))}
-                className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
               />
             </div>
           </div>
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Résidence</legend>
-          <label className="block text-sm font-medium text-sambo-900" htmlFor="residence">
+          <legend className="text-lg font-medium text-ink">Résidence</legend>
+          <label className="block text-sm font-medium text-ink" htmlFor="residence">
             Adresse ou quartier de résidence
           </label>
           <input
@@ -268,13 +268,13 @@ export function Profile() {
             required
             value={form.residence}
             onChange={(e) => setForm((f) => ({ ...f, residence: e.target.value }))}
-            className="w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+            className="w-full rounded-xl px-3 py-2 text-sm field"
           />
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Études</legend>
-          <label className="flex items-center gap-2 text-sm text-sambo-800/80">
+          <legend className="text-lg font-medium text-ink">Études</legend>
+          <label className="flex items-center gap-2 text-sm text-ink-muted">
             <input
               type="checkbox"
               checked={!form.still_studying}
@@ -286,14 +286,14 @@ export function Profile() {
           {form.still_studying && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-sambo-900" htmlFor="faculty">
+                <label className="block text-sm font-medium text-ink" htmlFor="faculty">
                   Faculté / établissement
                 </label>
                 <select
                   id="faculty"
                   value={form.faculty}
                   onChange={(e) => setForm((f) => ({ ...f, faculty: e.target.value, program: '' }))}
-                  className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                  className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
                 >
                   <option value="">—</option>
                   {UNIVERSITY_ESTABLISHMENTS.map((est) => (
@@ -304,7 +304,7 @@ export function Profile() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-sambo-900" htmlFor="program">
+                <label className="block text-sm font-medium text-ink" htmlFor="program">
                   Mention / parcours
                 </label>
                 <select
@@ -312,7 +312,7 @@ export function Profile() {
                   value={form.program}
                   disabled={!form.faculty}
                   onChange={(e) => setForm((f) => ({ ...f, program: e.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none disabled:bg-sambo-100"
+                  className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
                 >
                   <option value="">—</option>
                   {mentions.map((m) => (
@@ -323,14 +323,14 @@ export function Profile() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-sambo-900" htmlFor="study_level">
+                <label className="block text-sm font-medium text-ink" htmlFor="study_level">
                   Niveau d'étude
                 </label>
                 <select
                   id="study_level"
                   value={form.study_level}
                   onChange={(e) => setForm((f) => ({ ...f, study_level: e.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                  className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
                 >
                   <option value="">—</option>
                   {STUDY_LEVELS.map((lvl) => (
@@ -341,14 +341,14 @@ export function Profile() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-sambo-900" htmlFor="student_id">
+                <label className="block text-sm font-medium text-ink" htmlFor="student_id">
                   Identifiant carte étudiant
                 </label>
                 <input
                   id="student_id"
                   value={form.student_id}
                   onChange={(e) => setForm((f) => ({ ...f, student_id: e.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                  className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
                 />
               </div>
             </div>
@@ -356,40 +356,40 @@ export function Profile() {
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-sambo-900">Contact d'urgence</legend>
+          <legend className="text-lg font-medium text-ink">Contact d'urgence</legend>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-sambo-900" htmlFor="emergency_contact_name">
+              <label className="block text-sm font-medium text-ink" htmlFor="emergency_contact_name">
                 Nom du contact familial
               </label>
               <input
                 id="emergency_contact_name"
                 value={emergency.contact_name}
                 onChange={(e) => setEmergency((c) => ({ ...c, contact_name: e.target.value }))}
-                className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-sambo-900" htmlFor="emergency_contact_phone">
+              <label className="block text-sm font-medium text-ink" htmlFor="emergency_contact_phone">
                 Téléphone du contact
               </label>
               <input
                 id="emergency_contact_phone"
                 value={emergency.contact_phone}
                 onChange={(e) => setEmergency((c) => ({ ...c, contact_phone: e.target.value }))}
-                className="mt-1 w-full rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
+                className="mt-1 w-full rounded-xl px-3 py-2 text-sm field"
               />
             </div>
           </div>
         </fieldset>
 
         <fieldset className="space-y-3">
-          <legend className="text-lg font-medium text-sambo-900">Visibilité dans l'annuaire</legend>
-          <p className="text-sm text-sambo-800/70">
+          <legend className="text-lg font-medium text-ink">Visibilité dans l'annuaire</legend>
+          <p className="text-sm text-ink-muted">
             Votre téléphone est toujours visible des autres membres validés dans l'annuaire.
             Vous pouvez choisir d'y afficher aussi votre email.
           </p>
-          <label className="flex items-center gap-2 text-sm text-sambo-800/80">
+          <label className="flex items-center gap-2 text-sm text-ink-muted">
             <input
               type="checkbox"
               checked={form.show_email_in_directory}
@@ -399,13 +399,13 @@ export function Profile() {
           </label>
         </fieldset>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        {saved && <p className="text-sm text-sambo-700">Profil mis à jour.</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
+        {saved && <p className="text-sm text-accent">Profil mis à jour.</p>}
 
         <button
           type="submit"
           disabled={saving}
-          className="rounded-xl bg-sambo-700 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-sambo-800 disabled:opacity-60"
+          className="rounded-xl btn-primary px-5 py-2.5 text-sm disabled:opacity-60"
         >
           {saving ? 'Enregistrement…' : 'Enregistrer'}
         </button>

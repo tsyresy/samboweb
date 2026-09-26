@@ -70,10 +70,10 @@ export function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-sambo-950">
+      <h1 className="text-2xl font-semibold text-ink">
         Bonjour{profile?.first_names ? `, ${profile.first_names}` : ''} 👋
       </h1>
-      <p className="mt-2 text-sambo-800/70">
+      <p className="mt-2 text-ink-muted">
         Bienvenue dans votre espace membre SAMBO.
       </p>
 
@@ -81,32 +81,32 @@ export function Dashboard() {
         {profile?.status === 'valide' ? (
           <Link
             to="/app/carte"
-            className="rounded-2xl border border-sambo-200/70 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+            className="rounded-2xl border border-line glass glass-link p-5"
           >
-            <p className="text-sm font-medium text-sambo-700">Ma carte de membre</p>
-            <p className="mt-1 text-xs text-sambo-700/60">Voir et télécharger →</p>
+            <p className="text-sm font-medium text-accent">Ma carte de membre</p>
+            <p className="mt-1 text-xs text-ink-subtle">Voir et télécharger →</p>
           </Link>
         ) : (
-          <div className="rounded-2xl border border-sambo-200/70 bg-white p-5 shadow-sm">
-            <p className="text-sm font-medium text-sambo-700">Ma carte de membre</p>
-            <p className="mt-1 text-xs text-sambo-700/60">Disponible après validation.</p>
+          <div className="rounded-2xl border border-line glass p-5">
+            <p className="text-sm font-medium text-accent">Ma carte de membre</p>
+            <p className="mt-1 text-xs text-ink-subtle">Disponible après validation.</p>
           </div>
         )}
         <Link
           to="/app/adidy"
-          className={`rounded-2xl border p-5 shadow-sm transition-shadow hover:shadow-md ${
-            owes ? 'border-red-200 bg-red-50' : 'border-sambo-200/70 bg-white'
+          className={`glass-link rounded-2xl border p-5 ${
+            owes ? 'border-red-400/30 bg-red-500/10' : 'border-line glass'
           }`}
         >
-          <p className="text-sm font-medium text-sambo-700">Mes adidy — total dû</p>
+          <p className="text-sm font-medium text-accent">Mes adidy — total dû</p>
           {dues === null ? (
-            <p className="mt-1 text-xs text-sambo-700/60">Chargement…</p>
+            <p className="mt-1 text-xs text-ink-subtle">Chargement…</p>
           ) : (
             <>
-              <p className={`mt-1 text-2xl font-bold ${owes ? 'text-red-700' : 'text-sambo-700'}`}>
+              <p className={`mt-1 text-2xl font-bold ${owes ? 'text-danger' : 'text-accent'}`}>
                 {formatAr(dues.amount)}
               </p>
-              <p className="mt-0.5 text-xs text-sambo-700/60">
+              <p className="mt-0.5 text-xs text-ink-subtle">
                 {owes
                   ? `${dues.months} mois impayé${dues.months > 1 ? 's' : ''} · Voir le détail →`
                   : 'Vous êtes à jour. Misaotra !'}
@@ -114,28 +114,28 @@ export function Dashboard() {
             </>
           )}
         </Link>
-        <div className="rounded-2xl border border-sambo-200/70 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-sambo-700">Prochaine activité</p>
-          <p className="mt-1 text-xs text-sambo-700/60">Rien de prévu pour l'instant.</p>
+        <div className="rounded-2xl border border-line glass p-5">
+          <p className="text-sm font-medium text-accent">Prochaine activité</p>
+          <p className="mt-1 text-xs text-ink-subtle">Rien de prévu pour l'instant.</p>
         </div>
       </div>
 
       <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <section>
           <div className="flex items-baseline justify-between gap-3">
-            <h2 className="text-lg font-semibold text-sambo-950">Dernières publications</h2>
-            <Link to="/app/discussions" className="text-sm font-medium text-sambo-700 hover:underline">
+            <h2 className="text-lg font-semibold text-ink">Dernières publications</h2>
+            <Link to="/app/discussions" className="text-sm font-medium text-accent hover:underline">
               Tout voir →
             </Link>
           </div>
 
           <div className="mt-3 space-y-3">
             {posts === null ? (
-              <p className="text-sm text-sambo-700/60">Chargement…</p>
+              <p className="text-sm text-ink-subtle">Chargement…</p>
             ) : posts.length === 0 ? (
               <Link
                 to="/app/discussions"
-                className="block rounded-2xl border border-dashed border-sambo-300 bg-white p-5 text-sm text-sambo-700 hover:bg-sambo-50"
+                className="block rounded-2xl border border-dashed border-line-strong glass p-5 text-sm text-accent hover:bg-white/[0.04]"
               >
                 Aucune publication pour l'instant. Soyez le premier à partager quelque chose →
               </Link>
@@ -144,21 +144,21 @@ export function Dashboard() {
                 <Link
                   key={post.id}
                   to="/app/discussions"
-                  className="flex gap-3 rounded-2xl border border-sambo-200/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                  className="flex gap-3 rounded-2xl border border-line glass glass-link p-4"
                 >
                   {post.author?.photo_url ? (
                     <img src={post.author.photo_url} alt="" className="h-10 w-10 shrink-0 rounded-full object-cover" />
                   ) : (
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sambo-100 font-semibold text-sambo-700">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 font-semibold text-accent">
                       {(post.author?.name ?? 'M').charAt(0)}
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="text-sm">
-                      <span className="font-medium text-sambo-950">{post.author?.name ?? 'Membre'}</span>
-                      <span className="ml-2 text-xs text-sambo-700/60">{timeAgo(post.created_at)}</span>
+                      <span className="font-medium text-ink">{post.author?.name ?? 'Membre'}</span>
+                      <span className="ml-2 text-xs text-ink-subtle">{timeAgo(post.created_at)}</span>
                     </p>
-                    <p className="mt-1 line-clamp-3 text-sm whitespace-pre-line text-sambo-900/80">{post.content}</p>
+                    <p className="mt-1 line-clamp-3 text-sm whitespace-pre-line text-ink-muted">{post.content}</p>
                   </div>
                 </Link>
               ))
@@ -169,8 +169,8 @@ export function Dashboard() {
         {NEWS_POSTS[0] && (
           <section>
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-lg font-semibold text-sambo-950">Dernière actualité</h2>
-              <Link to="/actualites" className="text-sm font-medium text-sambo-700 hover:underline">
+              <h2 className="text-lg font-semibold text-ink">Dernière actualité</h2>
+              <Link to="/actualites" className="text-sm font-medium text-accent hover:underline">
                 Toutes →
               </Link>
             </div>

@@ -186,13 +186,13 @@ export function AdminMembers() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-sambo-950">Gestion des membres</h1>
-      <p className="mt-2 text-sambo-800/70">
+      <h1 className="text-2xl font-semibold text-ink">Gestion des membres</h1>
+      <p className="mt-2 text-ink-muted">
         Validez les candidatures, attribuez les catégories et les fonctions du bureau.
       </p>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
-        <div className="flex flex-wrap gap-1 rounded-full border border-sambo-200 bg-white p-1">
+        <div className="flex flex-wrap gap-1 rounded-full border border-line glass p-1">
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.value}
@@ -200,8 +200,8 @@ export function AdminMembers() {
               onClick={() => setStatusFilter(f.value)}
               className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
                 statusFilter === f.value
-                  ? 'bg-sambo-700 text-white'
-                  : 'text-sambo-900/70 hover:bg-sambo-100'
+                  ? 'bg-accent-strong text-on-accent font-semibold'
+                  : 'text-ink-muted hover:bg-white/10'
               }`}
             >
               {f.label}
@@ -213,21 +213,21 @@ export function AdminMembers() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher par nom, email, numéro…"
-          className="flex-1 min-w-[220px] rounded-full border border-sambo-200 px-4 py-1.5 text-sm focus:border-sambo-500 focus:outline-none"
+          className="flex-1 min-w-[220px] rounded-full px-4 py-1.5 text-sm field"
         />
       </div>
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-4 text-sm text-danger">{error}</p>}
 
       {loading ? (
-        <p className="mt-8 text-sambo-700/60">Chargement…</p>
+        <p className="mt-8 text-ink-subtle">Chargement…</p>
       ) : filtered.length === 0 ? (
-        <p className="mt-8 text-sambo-700/60">Aucun membre pour ce filtre.</p>
+        <p className="mt-8 text-ink-subtle">Aucun membre pour ce filtre.</p>
       ) : (
-        <div className="mt-6 overflow-x-auto rounded-2xl border border-sambo-200/70 bg-white">
-          <table className="min-w-full divide-y divide-sambo-200/70 text-sm">
+        <div className="mt-6 overflow-x-auto rounded-2xl border border-line glass">
+          <table className="min-w-full divide-y divide-line text-sm">
             <thead>
-              <tr className="text-left text-xs font-semibold uppercase tracking-wide text-sambo-700/60">
+              <tr className="text-left text-xs font-semibold uppercase tracking-wide text-ink-subtle">
                 <th className="px-4 py-3">Membre</th>
                 <th className="px-4 py-3">Catégorie</th>
                 <th className="px-4 py-3">Fonction</th>
@@ -236,7 +236,7 @@ export function AdminMembers() {
                 <th className="px-4 py-3">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-sambo-200/70">
+            <tbody className="divide-y divide-line">
               {filtered.map((p) => {
                 const isBusy = busyId === p.id
                 const currentPositionId = assignmentByProfile.get(p.id)?.position_id ?? ''
@@ -244,11 +244,11 @@ export function AdminMembers() {
                 return (
                   <tr key={p.id}>
                     <td className="px-4 py-3 align-top">
-                      <p className="font-medium text-sambo-950">{fullName(p)}</p>
-                      {p.nickname && <p className="text-xs text-sambo-700/60">« {p.nickname} »</p>}
-                      <p className="text-xs text-sambo-700/60">{p.email}</p>
+                      <p className="font-medium text-ink">{fullName(p)}</p>
+                      {p.nickname && <p className="text-xs text-ink-subtle">« {p.nickname} »</p>}
+                      <p className="text-xs text-ink-subtle">{p.email}</p>
                       {p.member_number && (
-                        <p className="mt-1 text-xs font-medium text-sambo-700">{p.member_number}</p>
+                        <p className="mt-1 text-xs font-medium text-accent">{p.member_number}</p>
                       )}
                     </td>
 
@@ -257,7 +257,7 @@ export function AdminMembers() {
                         value={p.category}
                         disabled={isBusy}
                         onChange={(e) => setCategory(p, e.target.value as MembershipCategory)}
-                        className="rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none disabled:opacity-50"
+                        className="rounded-lg px-2 py-1 text-sm field"
                       >
                         {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
                           <option key={value} value={value}>
@@ -272,7 +272,7 @@ export function AdminMembers() {
                         value={currentPositionId}
                         disabled={isBusy}
                         onChange={(e) => assignPosition(p, e.target.value)}
-                        className="rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none disabled:opacity-50"
+                        className="rounded-lg px-2 py-1 text-sm field"
                       >
                         <option value="">— Aucune —</option>
                         {positions.map((pos) => (
@@ -288,7 +288,7 @@ export function AdminMembers() {
                         value={p.access_level}
                         disabled={isBusy}
                         onChange={(e) => setAccessLevel(p, e.target.value as AccessLevel)}
-                        className="rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none disabled:opacity-50"
+                        className="rounded-lg px-2 py-1 text-sm field"
                       >
                         {Object.entries(ACCESS_LEVEL_LABELS).map(([value, label]) => (
                           <option key={value} value={value}>
@@ -302,10 +302,10 @@ export function AdminMembers() {
                       <span
                         className={`inline-block rounded-full px-2.5 py-1 text-xs font-medium ${
                           p.status === 'valide'
-                            ? 'bg-sambo-100 text-sambo-700'
+                            ? 'bg-white/10 text-accent'
                             : p.status === 'en_attente'
-                              ? 'bg-gold-400/20 text-gold-600'
-                              : 'bg-red-100 text-red-700'
+                              ? 'bg-gold-400/20 text-gold-300'
+                              : 'bg-red-500/15 text-danger'
                         }`}
                       >
                         {STATUS_FILTERS.find((f) => f.value === p.status)?.label ?? p.status}
@@ -320,7 +320,7 @@ export function AdminMembers() {
                               type="button"
                               disabled={isBusy}
                               onClick={() => setStatus(p, 'valide')}
-                              className="rounded-lg bg-sambo-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-sambo-800 disabled:opacity-50"
+                              className="rounded-lg btn-primary px-3 py-1.5 text-xs disabled:opacity-50"
                             >
                               Valider
                             </button>
@@ -328,7 +328,7 @@ export function AdminMembers() {
                               type="button"
                               disabled={isBusy}
                               onClick={() => setStatus(p, 'refuse')}
-                              className="rounded-lg border border-sambo-200 px-3 py-1.5 text-xs font-medium text-sambo-900 hover:bg-sambo-100 disabled:opacity-50"
+                              className="rounded-lg px-3 py-1.5 text-xs font-medium btn-glass disabled:opacity-50"
                             >
                               Refuser
                             </button>
@@ -339,7 +339,7 @@ export function AdminMembers() {
                             type="button"
                             disabled={isBusy}
                             onClick={() => setStatus(p, 'suspendu')}
-                            className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+                            className="rounded-lg border border-red-400/30 px-3 py-1.5 text-xs font-medium text-danger hover:bg-red-500/10 disabled:opacity-50"
                           >
                             Suspendre
                           </button>
@@ -349,7 +349,7 @@ export function AdminMembers() {
                             type="button"
                             disabled={isBusy}
                             onClick={() => setStatus(p, 'valide')}
-                            className="rounded-lg bg-sambo-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-sambo-800 disabled:opacity-50"
+                            className="rounded-lg btn-primary px-3 py-1.5 text-xs disabled:opacity-50"
                           >
                             Réactiver
                           </button>

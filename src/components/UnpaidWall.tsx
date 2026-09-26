@@ -20,18 +20,18 @@ function fullName(m: UnpaidMember) {
 
 function UnpaidCard({ member }: { member: UnpaidMember }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-red-200 bg-white p-3 shadow-sm">
+    <div className="flex items-center gap-3 rounded-2xl border border-red-400/30 glass p-3">
       {member.photo_url ? (
-        <img src={member.photo_url} alt="" className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-red-200" />
+        <img src={member.photo_url} alt="" className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-red-400/30" />
       ) : (
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-50 text-lg font-semibold text-red-700 ring-2 ring-red-200">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-500/10 text-lg font-semibold text-danger ring-2 ring-red-400/30">
           {fullName(member).charAt(0)}
         </div>
       )}
       <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-sambo-950">{fullName(member)}</p>
-        {member.nickname && <p className="truncate text-xs text-sambo-700/60">« {member.nickname} »</p>}
-        <p className="mt-0.5 text-xs font-medium text-red-700">
+        <p className="truncate text-sm font-semibold text-ink">{fullName(member)}</p>
+        {member.nickname && <p className="truncate text-xs text-ink-subtle">« {member.nickname} »</p>}
+        <p className="mt-0.5 text-xs font-medium text-danger">
           {member.unpaid_months} mois impayé{member.unpaid_months > 1 ? 's' : ''}
         </p>
       </div>
@@ -62,18 +62,18 @@ export function UnpaidWall({ className = '' }: { className?: string }) {
   const duration = `${Math.max(loop.length * 3.5, 20)}s`
 
   return (
-    <aside className={`flex flex-col overflow-hidden rounded-3xl border border-red-200 bg-red-50/60 ${className}`}>
-      <div className="border-b border-red-200 bg-white/70 px-4 py-4 text-center">
-        <h2 className="text-xl leading-tight font-extrabold tracking-tight text-red-700 uppercase">
+    <aside className={`flex flex-col overflow-hidden rounded-3xl border border-red-400/30 bg-red-500/10 ${className}`}>
+      <div className="border-b border-red-400/30 glass-strong px-4 py-4 text-center">
+        <h2 className="text-xl leading-tight font-extrabold tracking-tight text-danger uppercase">
           Membres TSY NAHALOHA ADIDY
         </h2>
-        <p className="mt-1 text-xs text-sambo-800/70">Cotisations non réglées à la date du jour</p>
+        <p className="mt-1 text-xs text-ink-muted">Cotisations non réglées à la date du jour</p>
       </div>
 
       {members === null ? (
-        <p className="p-4 text-center text-sm text-sambo-700/60">Chargement…</p>
+        <p className="p-4 text-center text-sm text-ink-subtle">Chargement…</p>
       ) : members.length === 0 ? (
-        <p className="p-6 text-center text-sm font-medium text-sambo-700">
+        <p className="p-6 text-center text-sm font-medium text-accent">
           Tout le monde est à jour. Misaotra betsaka !
         </p>
       ) : (

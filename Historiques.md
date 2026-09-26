@@ -566,3 +566,27 @@ Fait :
   est une recherche datée du 23/09/2026, à reconfirmer auprès des scolarités
   avant mise en production (mentions/parcours changent à chaque habilitation
   MESupReS).
+
+## Refonte visuelle — 2026-09-26
+
+- **Thème sombre en dégradé** (vert SAMBO + or) sur tout le site, pages
+  publiques et espace membre : fond noir-vert fixe avec lueurs émeraude et
+  or (calque `body::before`, compatible iOS Safari), `color-scheme: dark`
+  pour les contrôles natifs (dates, listes, cases).
+- **Glassmorphism façon iOS** : utilitaires `glass` (cartes, panneaux),
+  `glass-strong` (barre de navigation, sidebar, tiroir mobile, infobulles),
+  `btn-primary` (vert lumineux, texte sombre pour le contraste),
+  `btn-glass`, `btn-danger`, `field` (champs avec halo au focus) dans
+  `src/index.css`. Couleurs sémantiques `ink` / `ink-muted` / `ink-subtle`
+  / `accent` / `danger` / `line` (contrastes ≥ 4,5:1 sur le verre).
+- **Animations uniquement sur les éléments interactifs** : transitions
+  220 ms (courbe « ease-out » fluide) sur liens, boutons et champs ;
+  enfoncement au clic ; cartes-liens qui se soulèvent au survol ; pastille
+  de la navigation latérale qui glisse d'un lien à l'autre (motion,
+  `layoutId`). Aucune animation d'entrée de page ; `prefers-reduced-motion`
+  coupe tout.
+- La carte de membre (exportée en image) garde son design imprimable.
+- Graphique des paiements recoloré pour le fond sombre.
+- `PRODUCT.md` ajouté (contexte produit pour l'outil de design).
+- Vérifié en navigateur (desktop 1280 px + mobile 390 px, 20 pages) :
+  aucune erreur console, aucun débordement horizontal.
