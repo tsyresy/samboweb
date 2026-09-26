@@ -4,14 +4,7 @@ import { UNIVERSITY_ESTABLISHMENTS, STUDY_LEVELS } from '@/data/universities'
 import { uploadSignedPhoto } from '@/lib/cloudinary'
 import { supabase } from '@/lib/supabase'
 import type { MembershipCategory } from '@/types'
-
-const CATEGORIES: { value: MembershipCategory; label: string }[] = [
-  { value: 'membre_standard', label: 'Membre standard' },
-  { value: 'membre_bureau', label: 'Membre de bureau' },
-  { value: 'sojabe', label: 'Sojabe' },
-  { value: 'partenaire', label: 'Partenaire' },
-  { value: 'sponsor', label: 'Sponsor' },
-]
+import { CATEGORY_LABELS } from '@/lib/membership'
 
 const STRENGTH_LEVELS = [
   { label: 'Trop court', barColor: 'bg-red-500', textColor: 'text-red-600' },
@@ -175,9 +168,9 @@ export function Register() {
             <option value="" disabled>
               Choisissez une catégorie
             </option>
-            {CATEGORIES.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
+            {(Object.entries(CATEGORY_LABELS) as [MembershipCategory, string][]).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
               </option>
             ))}
           </select>

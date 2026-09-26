@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { categoryLabel } from '@/components/MembershipCardView'
+import { categoryLabel } from '@/lib/membership'
 import { supabase } from '@/lib/supabase'
 
 interface VerificationResult {

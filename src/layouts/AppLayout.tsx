@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { PageLoader } from '@/components/PageLoader'
 import { useAuth } from '@/context/AuthContext'
 import { PresenceProvider } from '@/context/PresenceContext'
 
@@ -163,7 +164,9 @@ export function AppLayout() {
 
       <main className="min-w-0 flex-1 px-4 py-8 sm:px-8">
         <PresenceProvider>
-          <Outlet />
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
         </PresenceProvider>
       </main>
     </div>

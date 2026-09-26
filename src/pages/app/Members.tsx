@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { MembershipCategory } from '@/types'
+import { CATEGORY_LABELS } from '@/lib/membership'
 
 interface DirectoryEntry {
   id: string
@@ -12,14 +13,6 @@ interface DirectoryEntry {
   photo_url: string | null
   phone: string | null
   email: string | null
-}
-
-const CATEGORY_LABELS: Record<MembershipCategory, string> = {
-  membre_standard: 'Membre standard',
-  membre_bureau: 'Membre de bureau',
-  sojabe: 'Sojabe',
-  partenaire: 'Partenaire',
-  sponsor: 'Sponsor',
 }
 
 function fullName(m: DirectoryEntry) {

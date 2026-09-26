@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
+import { PageLoader } from '@/components/PageLoader'
 import { useAuth } from '@/context/AuthContext'
 import type { AccessLevel } from '@/types'
 
@@ -18,11 +19,7 @@ export function ProtectedRoute({
   const { session, profile, loading, profileLoading } = useAuth()
 
   if (loading || (session && profileLoading)) {
-    return (
-      <div className="flex min-h-[50vh] items-center justify-center text-sambo-700">
-        Chargement…
-      </div>
-    )
+    return <PageLoader />
   }
 
   if (!session) return <Navigate to="/connexion" replace />

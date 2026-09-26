@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { AccessLevel, MembershipCategory, Profile, ValidationStatus } from '@/types'
+import { CATEGORY_LABELS } from '@/lib/membership'
 
 interface OfficePosition {
   id: string
@@ -20,14 +21,6 @@ const STATUS_FILTERS: { value: ValidationStatus | 'tous'; label: string }[] = [
   { value: 'refuse', label: 'Refusés' },
   { value: 'tous', label: 'Tous' },
 ]
-
-const CATEGORY_LABELS: Record<MembershipCategory, string> = {
-  membre_standard: 'Membre standard',
-  membre_bureau: 'Membre de bureau',
-  sojabe: 'Sojabe',
-  partenaire: 'Partenaire',
-  sponsor: 'Sponsor',
-}
 
 const ACCESS_LEVEL_LABELS: Record<AccessLevel, string> = {
   membre: 'Membre',

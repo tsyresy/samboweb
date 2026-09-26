@@ -4,14 +4,7 @@ import { UNIVERSITY_ESTABLISHMENTS, STUDY_LEVELS } from '@/data/universities'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { uploadSignedPhoto } from '@/lib/cloudinary'
-
-const CATEGORY_LABELS: Record<string, string> = {
-  membre_standard: 'Membre standard',
-  membre_bureau: 'Membre de bureau',
-  sojabe: 'Sojabe',
-  partenaire: 'Partenaire',
-  sponsor: 'Sponsor',
-}
+import { CATEGORY_LABELS } from '@/lib/membership'
 
 const STATUS_LABELS: Record<string, string> = {
   en_attente: 'En attente de validation',

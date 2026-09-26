@@ -1,6 +1,7 @@
 import { toPng } from 'html-to-image'
 import { useEffect, useRef, useState } from 'react'
-import { categoryLabel, MembershipCardView } from '@/components/MembershipCardView'
+import { MembershipCardView } from '@/components/MembershipCardView'
+import { categoryLabel } from '@/lib/membership'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
 

@@ -2,14 +2,6 @@ import { forwardRef, useEffect, useState } from 'react'
 import { generateQrDataUrl } from '@/lib/qrcode'
 import type { Profile } from '@/types'
 
-const CATEGORY_LABELS: Record<string, string> = {
-  membre_standard: 'Membre standard',
-  membre_bureau: 'Membre de bureau',
-  sojabe: 'Sojabe',
-  partenaire: 'Partenaire',
-  sponsor: 'Sponsor',
-}
-
 interface MembershipCardViewProps {
   profile: Profile
   roleLabel: string
@@ -156,7 +148,3 @@ export const MembershipCardView = forwardRef<HTMLDivElement, MembershipCardViewP
     )
   },
 )
-
-export function categoryLabel(category: string) {
-  return CATEGORY_LABELS[category] ?? category
-}
