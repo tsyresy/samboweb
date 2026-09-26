@@ -524,29 +524,14 @@ Fait :
   - erreurs d'enregistrement du montant du mois ignorées en silence, et
     montant négatif refusé sans message → affichées ;
   - réponse d'une requête ancienne (changement de mois rapide) ignorée.
-- **Journal d'audit** (migration `0012`, page
-  `/app/administration/journal`, administrateurs) :
-  - **faille corrigée** : le trigger d'audit des paiements ne couvrait que
-    `UPDATE`, or l'écran admin enregistre par upsert → la **première
-    saisie d'un paiement n'était jamais journalisée**, seulement les
-    corrections. Couvre maintenant `INSERT`, plus la date de paiement et
-    la note ; chaque entrée garde son contexte (membre, année, mois).
-  - les montants mensuels (`dues_rules`) sont journalisés : création,
-    modification, suppression (retour au défaut).
-  - la page affiche qui a fait quoi et quand, en français (« Admin a
-    enregistré l'adidy de septembre 2026 de Rakoto Jean — Statut : — →
-    Payé »), filtres Membres / Paiements / Montants, pagination par 50.
-    Les entrées antérieures à `0012` (sans contexte) sont complétées en
-    relisant la ligne de paiement.
-  - Migration testée sur PGlite avec les 12 migrations enchaînées ; page
-    testée en navigateur (desktop + 390 px) avec Supabase simulé.
+- ~~Journal d'audit (page `/app/administration/journal` + migration
+  `0012_audit_adidy_complet`)~~ : **retiré le jour même à la demande de
+  l'utilisateur** (crainte de saturer la base). La migration n'avait pas
+  été appliquée. Les triggers d'audit d'origine (`0002`, `0004`) restent.
 
 À faire :
-- **Appliquer `supabase/migrations/0012_audit_adidy_complet.sql`** dans
-  Supabase → SQL Editor (la page du journal fonctionne sans, mais les
-  premières saisies de paiement ne seront tracées qu'après).
 - Vérifier sur les vraies données : exports CSV ouverts dans Excel /
-  LibreOffice, et une saisie de paiement visible dans le journal.
+  LibreOffice.
 - Avertissements restants de l'analyse statique (`oxlint`, 7) :
   `setState` dans des effets de chargement — sans bug constaté.
 
@@ -590,3 +575,35 @@ Fait :
 - `PRODUCT.md` ajouté (contexte produit pour l'outil de design).
 - Vérifié en navigateur (desktop 1280 px + mobile 390 px, 20 pages) :
   aucune erreur console, aucun débordement horizontal.
+
+## Carte de membre et QR — 2026-09-26
+
+- **Texte agrandi** : attribution/rôle 0,24 → 0,33 cm (sur deux lignes si
+  long), nom et prénom 0,22 → 0,34 cm en gras ; un nom très long est
+  réduit juste assez pour tenir en entier (ex. « Jean-Baptiste Hery
+  Fanomezantsoa ») au lieu d'être coupé.
+- **QR** : il encodait `window.location.origin + /verifier/…`, donc
+  `http://localhost:5173/…` sur une carte générée en local. Il encode
+  maintenant `sambo://membre/<verification_id>` : un schéma propre à
+  l'application SAMBO (la future appli mobile l'enregistre pour s'ouvrir
+  directement au scan), indépendant du domaine. Helpers
+  `memberQrPayload()` / `parseMemberQr()` dans `src/lib/membership.ts`.
+- **Toutes les informations personnelles, entre membres uniquement**
+  (migration `0012_fiche_membre_qr`) : fonction
+  `member_card_details(verification_id)` qui renvoie la fiche complète
+  (identité, CIN, naissance, contacts, résidence, études, fonction,
+  contact d'urgence, statut de la carte). Refusée à un visiteur non
+  connecté et à un membre non validé. Les infos ne sont jamais écrites
+  dans le QR lui-même (une photo de la carte ne suffit pas à les lire).
+  Testée sur PGlite (validé ✓, en attente ✗, anonyme ✗, code inconnu → rien).
+- **Page `/app/membre/:id`** : la fiche telle que l'application
+  l'affichera après un scan ; sert aussi à tester dès maintenant.
+- QR décodé automatiquement sur la carte rendue (jsQR) → bon contenu.
+
+À faire :
+- **Appliquer `supabase/migrations/0012_fiche_membre_qr.sql`** dans
+  Supabase → SQL Editor.
+- Retélécharger / réimprimer les cartes déjà générées (leur QR pointe vers
+  `localhost`).
+- Application mobile : enregistrer le schéma `sambo://`, scanner, lire
+  l'id avec `parseMemberQr`, appeler `member_card_details`.

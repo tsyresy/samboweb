@@ -420,7 +420,12 @@ export interface Database {
         Relationships: []
       }
     }
-    Functions: Record<string, never>
+    Functions: {
+      member_card_details: {
+        Args: { p_verification_id: string }
+        Returns: MemberCardDetails | null
+      }
+    }
     Enums: {
       membership_category_t: MembershipCategoryT
       validation_status_t: ValidationStatusT
@@ -428,4 +433,33 @@ export interface Database {
       dues_status_t: DuesStatusT
     }
   }
+}
+
+/** Returned by public.member_card_details() (migration 0012): the full
+ *  record of a scanned member, for validated members only. */
+export interface MemberCardDetails {
+  card_status: 'active' | 'revoked'
+  issued_at: string
+  revoked_at: string | null
+  member_number: string | null
+  last_name: string | null
+  first_names: string | null
+  nickname: string | null
+  birth_date: string | null
+  cin_number: string | null
+  phone: string | null
+  phone_secondary: string | null
+  email: string | null
+  residence: string | null
+  still_studying: boolean
+  faculty: string | null
+  program: string | null
+  study_level: string | null
+  student_id: string | null
+  photo_url: string | null
+  category: string
+  status: string
+  position: string | null
+  emergency_contact_name: string | null
+  emergency_contact_phone: string | null
 }

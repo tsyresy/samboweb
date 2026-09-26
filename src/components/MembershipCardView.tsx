@@ -1,4 +1,5 @@
 import { forwardRef, useEffect, useState } from 'react'
+import { memberQrPayload } from '@/lib/membership'
 import { generateQrDataUrl } from '@/lib/qrcode'
 import type { Profile } from '@/types'
 
@@ -9,6 +10,13 @@ interface MembershipCardViewProps {
 }
 
 const BOX_BORDER = '#B5B7B8'
+
+/** Font size (cm) for a name line: 0.34cm, shrunk just enough for long
+ *  Malagasy names to fit whole in `widthCm` (bold glyphs ≈ 0.58em wide). */
+function nameFontSize(text: string, widthCm: number) {
+  const fit = widthCm / (Math.max(text.length, 1) * 0.58)
+  return `${Math.max(0.22, Math.min(0.34, fit)).toFixed(3)}cm`
+}
 const RED = '#D02B30'
 const GREEN = '#34A750'
 
@@ -29,8 +37,7 @@ export const MembershipCardView = forwardRef<HTMLDivElement, MembershipCardViewP
     const firstNames = profile.first_names ?? ''
 
     useEffect(() => {
-      const verifyUrl = `${window.location.origin}/verifier/${verificationId}`
-      generateQrDataUrl(verifyUrl).then(setQrDataUrl)
+      generateQrDataUrl(memberQrPayload(verificationId)).then(setQrDataUrl)
     }, [verificationId])
 
     return (
@@ -112,9 +119,10 @@ export const MembershipCardView = forwardRef<HTMLDivElement, MembershipCardViewP
         {/* Attribution / role */}
         <div
           className="absolute border-b-2 border-dashed pb-[0.03cm]"
-          style={{ left: '0.7cm', top: '2.95cm', width: '4.2cm', borderColor: BOX_BORDER }}
+          style={{ left: '0.7cm', top: '2.9cm', width: '4.2cm', borderColor: BOX_BORDER }}
         >
-          <span className="text-[0.24cm] font-bold text-sambo-900/70">{roleLabel}</span>
+          {/* Up to two lines for long titles (« Responsable logistique »). */}
+          <span className="line-clamp-2 text-[0.33cm] leading-[1.15] font-bold text-sambo-900">{roleLabel}</span>
         </div>
 
         {/* Divider */}
@@ -126,17 +134,21 @@ export const MembershipCardView = forwardRef<HTMLDivElement, MembershipCardViewP
             metrics vary slightly across browsers/fonts. */}
         <div
           className="absolute flex items-baseline gap-[0.15cm] border-b border-dotted border-sambo-900/60 pb-[0.04cm]"
-          style={{ left: '0.7cm', top: '3.95cm', width: '7.1cm' }}
+          style={{ left: '0.7cm', top: '3.86cm', width: '7.1cm' }}
         >
-          <span className="whitespace-nowrap text-[0.24cm] font-bold text-sambo-950">Nom:</span>
-          <span className="text-[0.22cm] text-sambo-950">{lastName}</span>
+          <span className="whitespace-nowrap text-[0.28cm] font-bold text-sambo-950">Nom:</span>
+          <span className="min-w-0 truncate font-semibold text-sambo-950" style={{ fontSize: nameFontSize(lastName, 5.9) }}>
+            {lastName}
+          </span>
         </div>
         <div
           className="absolute flex items-baseline gap-[0.15cm] border-b border-dotted border-sambo-900/60 pb-[0.04cm]"
-          style={{ left: '0.7cm', top: '4.45cm', width: '7.1cm' }}
+          style={{ left: '0.7cm', top: '4.4cm', width: '7.1cm' }}
         >
-          <span className="whitespace-nowrap text-[0.24cm] font-bold text-sambo-950">Prenom:</span>
-          <span className="text-[0.22cm] text-sambo-950">{firstNames}</span>
+          <span className="whitespace-nowrap text-[0.28cm] font-bold text-sambo-950">Prénom:</span>
+          <span className="min-w-0 truncate font-semibold text-sambo-950" style={{ fontSize: nameFontSize(firstNames, 5.5) }}>
+            {firstNames}
+          </span>
         </div>
         <p
           className="absolute text-right text-[0.18cm] text-sambo-900/70"

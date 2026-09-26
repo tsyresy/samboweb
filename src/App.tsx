@@ -14,7 +14,6 @@ import { RegisterConfirmation } from '@/pages/RegisterConfirmation'
 
 // Espace membre, inscription et vérification de carte : chargés à la demande
 // pour que les visiteurs des pages publiques ne téléchargent pas tout le code.
-const AdminAudit = lazy(() => import('@/pages/app/admin/AdminAudit').then((m) => ({ default: m.AdminAudit })))
 const AdminContent = lazy(() => import('@/pages/app/admin/AdminContent').then((m) => ({ default: m.AdminContent })))
 const AdminDues = lazy(() => import('@/pages/app/admin/AdminDues').then((m) => ({ default: m.AdminDues })))
 const AdminMembers = lazy(() => import('@/pages/app/admin/AdminMembers').then((m) => ({ default: m.AdminMembers })))
@@ -22,6 +21,7 @@ const Chat = lazy(() => import('@/pages/app/Chat').then((m) => ({ default: m.Cha
 const Dashboard = lazy(() => import('@/pages/app/Dashboard').then((m) => ({ default: m.Dashboard })))
 const Discussions = lazy(() => import('@/pages/app/Discussions').then((m) => ({ default: m.Discussions })))
 const Dues = lazy(() => import('@/pages/app/Dues').then((m) => ({ default: m.Dues })))
+const MemberDetails = lazy(() => import('@/pages/app/MemberDetails').then((m) => ({ default: m.MemberDetails })))
 const Members = lazy(() => import('@/pages/app/Members').then((m) => ({ default: m.Members })))
 const MembershipCard = lazy(() => import('@/pages/app/MembershipCard').then((m) => ({ default: m.MembershipCard })))
 const PendingApproval = lazy(() => import('@/pages/app/PendingApproval').then((m) => ({ default: m.PendingApproval })))
@@ -64,6 +64,7 @@ function App() {
           <Route path="chat" element={<Chat />} />
           <Route path="adidy" element={<Dues />} />
           <Route path="membres" element={<Members />} />
+          <Route path="membre/:verificationId" element={<MemberDetails />} />
           <Route
             path="administration/membres"
             element={
@@ -85,14 +86,6 @@ function App() {
             element={
               <ProtectedRoute requireAccessLevel="administrateur">
                 <AdminContent />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="administration/journal"
-            element={
-              <ProtectedRoute requireAccessLevel="administrateur">
-                <AdminAudit />
               </ProtectedRoute>
             }
           />
