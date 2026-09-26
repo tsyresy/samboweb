@@ -1,21 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PaymentFrequencyChart } from '@/components/PaymentFrequencyChart'
 import { useAuth } from '@/context/AuthContext'
-import { DEFAULT_DUES_AMOUNT, fetchMyDuesTotal, formatAr, type DuesTotal } from '@/lib/dues'
+import {
+  DEFAULT_DUES_AMOUNT,
+  DUES_STATUS_LABELS,
+  fetchMyDuesTotal,
+  formatAr,
+  MONTH_NAMES,
+  type DuesTotal,
+} from '@/lib/dues'
 import { supabase } from '@/lib/supabase'
 import type { DuesStatus, MembershipCategory } from '@/types'
-
-const MONTH_NAMES = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
-]
-
-const STATUS_LABELS: Record<DuesStatus, string> = {
-  paye: 'Payé',
-  impaye: 'Impayé',
-  exempte: 'Exempté',
-  en_attente: 'En attente',
-}
 
 const STATUS_STYLES: Record<DuesStatus, string> = {
   paye: 'bg-sambo-100 text-sambo-700',
@@ -151,7 +146,7 @@ export function Dues() {
             </div>
             {status && (
               <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[status]}`}>
-                {STATUS_LABELS[status]}
+                {DUES_STATUS_LABELS[status]}
               </span>
             )}
           </div>

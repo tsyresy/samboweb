@@ -1,4 +1,17 @@
 import { supabase } from '@/lib/supabase'
+import type { DuesStatus } from '@/types'
+
+export const MONTH_NAMES = [
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+]
+
+export const DUES_STATUS_LABELS: Record<DuesStatus, string> = {
+  impaye: 'Impayé',
+  paye: 'Payé',
+  exempte: 'Exempté',
+  en_attente: 'En attente',
+}
 
 /** Monthly adidy when no amount is set for a month — mirrors
  *  public.default_dues_amount() (migration 0010). */

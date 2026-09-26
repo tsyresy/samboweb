@@ -1,19 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
-import { DEFAULT_DUES_AMOUNT, formatAr } from '@/lib/dues'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { downloadCsv, type CsvCell } from '@/lib/csv'
+import { DEFAULT_DUES_AMOUNT, DUES_STATUS_LABELS, formatAr, MONTH_NAMES } from '@/lib/dues'
+import { categoryLabel } from '@/lib/membership'
 import { supabase } from '@/lib/supabase'
 import type { DuesStatus, Profile } from '@/types'
 
-const MONTH_NAMES = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
-]
-
-const STATUS_OPTIONS: { value: DuesStatus; label: string }[] = [
-  { value: 'impaye', label: 'Impayé' },
-  { value: 'paye', label: 'Payé' },
-  { value: 'exempte', label: 'Exempté' },
-  { value: 'en_attente', label: 'En attente' },
-]
+const STATUS_OPTIONS = Object.entries(DUES_STATUS_LABELS) as [DuesStatus, string][]
 
 interface RecordRow {
   id: string
@@ -37,12 +29,19 @@ export function AdminDues() {
   const [records, setRecords] = useState<RecordRow[]>([])
   const [ruleAmount, setRuleAmount] = useState('')
   const [ruleId, setRuleId] = useState<string | null>(null)
+  const [savedRuleAmount, setSavedRuleAmount] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [savingRule, setSavingRule] = useState(false)
+  const [exporting, setExporting] = useState(false)
+  // Answers to an older request (month changed meanwhile) are dropped.
+  const requestId = useRef(0)
 
-  async function load() {
-    setLoading(true)
+  // `refresh` reloads after a save without swapping the table for the
+  // loading message, so the admin keeps focus while tabbing through a row.
+  async function load({ refresh = false } = {}) {
+    const current = ++requestId.current
+    if (!refresh) setLoading(true)
     setError('')
 
     const [membersRes, recordsRes, ruleRes] = await Promise.all([
@@ -61,6 +60,8 @@ export function AdminDues() {
         .maybeSingle(),
     ])
 
+    if (current !== requestId.current) return
+
     if (membersRes.error) {
       setError(membersRes.error.message)
       setLoading(false)
@@ -70,6 +71,7 @@ export function AdminDues() {
     setMembers(membersRes.data ?? [])
     setRecords(recordsRes.data ?? [])
     setRuleId(ruleRes.data?.id ?? null)
+    setSavedRuleAmount(ruleRes.data ? Number(ruleRes.data.amount) : null)
     setRuleAmount(ruleRes.data ? String(ruleRes.data.amount) : '')
     setLoading(false)
   }
@@ -87,6 +89,7 @@ export function AdminDues() {
 
   async function saveRule() {
     setSavingRule(true)
+    setError('')
 
     // An emptied field means "no specific amount": drop the rule so the
     // month falls back to the default, instead of Number('') silently
@@ -95,27 +98,37 @@ export function AdminDues() {
       if (ruleId) {
         const { error: deleteError } = await supabase.from('dues_rules').delete().eq('id', ruleId)
         if (deleteError) setError(deleteError.message)
-        else setRuleId(null)
+        else {
+          setRuleId(null)
+          setSavedRuleAmount(null)
+        }
       }
       setSavingRule(false)
       return
     }
 
     const amount = Number(ruleAmount)
-    if (Number.isNaN(amount) || amount < 0) {
+    if (!Number.isFinite(amount) || amount < 0) {
+      setError('Montant invalide : entrez un nombre positif, 0 pour un mois gratuit, ou laissez vide.')
       setSavingRule(false)
       return
     }
 
     if (ruleId) {
-      await supabase.from('dues_rules').update({ amount }).eq('id', ruleId)
+      const { error: updateError } = await supabase.from('dues_rules').update({ amount }).eq('id', ruleId)
+      if (updateError) setError(updateError.message)
+      else setSavedRuleAmount(amount)
     } else {
-      const { data } = await supabase
+      const { data, error: insertError } = await supabase
         .from('dues_rules')
         .insert({ year, month, amount })
         .select('id')
         .single()
-      if (data) setRuleId(data.id)
+      if (insertError) setError(insertError.message)
+      else {
+        setRuleId(data.id)
+        setSavedRuleAmount(amount)
+      }
     }
 
     setSavingRule(false)
@@ -151,7 +164,66 @@ export function AdminDues() {
       return
     }
 
-    await load()
+    await load({ refresh: true })
+  }
+
+  function exportMonth() {
+    const due = savedRuleAmount ?? DEFAULT_DUES_AMOUNT
+    const rows: CsvCell[][] = [
+      ['Membre', 'N° membre', 'Catégorie', 'Statut', 'Montant dû (Ar)', 'Montant payé (Ar)', 'Date de paiement', 'Mode', 'Référence'],
+    ]
+    for (const m of members) {
+      const record = recordByProfile.get(m.id)
+      const status = record?.status ?? 'impaye'
+      rows.push([
+        fullName(m),
+        m.member_number,
+        categoryLabel(m.category),
+        DUES_STATUS_LABELS[status],
+        status === 'exempte' ? 0 : due,
+        record?.amount_paid,
+        record?.payment_date,
+        record?.payment_method,
+        record?.reference,
+      ])
+    }
+    downloadCsv(`adidy-${year}-${String(month).padStart(2, '0')}.csv`, rows)
+  }
+
+  async function exportYear() {
+    setExporting(true)
+    setError('')
+    const { data, error: yearError } = await supabase
+      .from('dues_records')
+      .select('profile_id, month, status, amount_paid')
+      .eq('year', year)
+    setExporting(false)
+    if (yearError) {
+      setError(yearError.message)
+      return
+    }
+
+    const byMember = new Map<string, Map<number, { status: DuesStatus; amount_paid: number | null }>>()
+    for (const r of data ?? []) {
+      if (!byMember.has(r.profile_id)) byMember.set(r.profile_id, new Map())
+      byMember.get(r.profile_id)!.set(r.month, r)
+    }
+
+    const rows: CsvCell[][] = [['Membre', 'N° membre', 'Catégorie', ...MONTH_NAMES, 'Mois payés', 'Total payé (Ar)']]
+    for (const m of members) {
+      const months = byMember.get(m.id)
+      let paidMonths = 0
+      let totalPaid = 0
+      const cells = MONTH_NAMES.map((_, i) => {
+        const record = months?.get(i + 1)
+        if (!record) return ''
+        if (record.status === 'paye') paidMonths++
+        totalPaid += Number(record.amount_paid ?? 0)
+        return DUES_STATUS_LABELS[record.status]
+      })
+      rows.push([fullName(m), m.member_number, categoryLabel(m.category), ...cells, paidMonths, totalPaid])
+    }
+    downloadCsv(`adidy-${year}-recapitulatif.csv`, rows)
   }
 
   if (loading) return <p className="text-sambo-700/60">Chargement…</p>
@@ -172,7 +244,12 @@ export function AdminDues() {
             id="year"
             type="number"
             value={year}
-            onChange={(e) => setYear(Number(e.target.value))}
+            min={2000}
+            max={2100}
+            onChange={(e) => {
+              const value = Number(e.target.value)
+              if (Number.isInteger(value) && value >= 2000 && value <= 2100) setYear(value)
+            }}
             className="mt-1 w-28 rounded-xl border border-sambo-200 px-3 py-2 text-sm focus:border-sambo-500 focus:outline-none"
           />
         </div>
@@ -220,6 +297,23 @@ export function AdminDues() {
             vide = montant par défaut, 0 = mois gratuit.
           </p>
         </div>
+        <div className="flex flex-wrap gap-2 sm:ml-auto">
+          <button
+            type="button"
+            onClick={exportMonth}
+            className="rounded-xl border border-sambo-200 bg-white px-4 py-2 text-sm font-medium text-sambo-800 hover:bg-sambo-50"
+          >
+            Exporter le mois (CSV)
+          </button>
+          <button
+            type="button"
+            onClick={exportYear}
+            disabled={exporting}
+            className="rounded-xl border border-sambo-200 bg-white px-4 py-2 text-sm font-medium text-sambo-800 hover:bg-sambo-50 disabled:opacity-60"
+          >
+            {exporting ? 'Export…' : `Récapitulatif ${year} (CSV)`}
+          </button>
+        </div>
       </div>
 
       {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
@@ -251,9 +345,9 @@ export function AdminDues() {
                       onChange={(e) => updateRecordField(m.id, { status: e.target.value as DuesStatus })}
                       className="rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
                     >
-                      {STATUS_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
+                      {STATUS_OPTIONS.map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
                         </option>
                       ))}
                     </select>
@@ -262,11 +356,10 @@ export function AdminDues() {
                     <input
                       type="number"
                       defaultValue={record?.amount_paid ?? ''}
-                      onBlur={(e) =>
-                        updateRecordField(m.id, {
-                          amount_paid: e.target.value ? Number(e.target.value) : null,
-                        })
-                      }
+                      onBlur={(e) => {
+                        const value = e.target.value ? Number(e.target.value) : null
+                        if (value !== (record?.amount_paid ?? null)) updateRecordField(m.id, { amount_paid: value })
+                      }}
                       className="w-24 rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
                     />
                   </td>
@@ -289,7 +382,10 @@ export function AdminDues() {
                     <input
                       type="text"
                       defaultValue={record?.payment_method ?? ''}
-                      onBlur={(e) => updateRecordField(m.id, { payment_method: e.target.value || null })}
+                      onBlur={(e) => {
+                        const value = e.target.value.trim() || null
+                        if (value !== (record?.payment_method ?? null)) updateRecordField(m.id, { payment_method: value })
+                      }}
                       className="w-28 rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
                     />
                   </td>
@@ -297,7 +393,10 @@ export function AdminDues() {
                     <input
                       type="text"
                       defaultValue={record?.reference ?? ''}
-                      onBlur={(e) => updateRecordField(m.id, { reference: e.target.value || null })}
+                      onBlur={(e) => {
+                        const value = e.target.value.trim() || null
+                        if (value !== (record?.reference ?? null)) updateRecordField(m.id, { reference: value })
+                      }}
                       className="w-32 rounded-lg border border-sambo-200 px-2 py-1 text-sm focus:border-sambo-500 focus:outline-none"
                     />
                   </td>
