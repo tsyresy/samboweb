@@ -601,8 +601,9 @@ Fait :
 - QR décodé automatiquement sur la carte rendue (jsQR) → bon contenu.
 
 À faire :
-- **Appliquer `supabase/migrations/0012_fiche_membre_qr.sql`** dans
-  Supabase → SQL Editor.
+- ~~Appliquer `supabase/migrations/0012_fiche_membre_qr.sql`~~ → appliquée
+  par l'utilisateur le 2026-09-26 ; tout est poussé sur `origin/main`
+  (`507e9d0`).
 - Retélécharger / réimprimer les cartes déjà générées (leur QR pointe vers
   `localhost`).
 - Application mobile : enregistrer le schéma `sambo://`, scanner, lire
