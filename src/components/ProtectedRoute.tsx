@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
 import { PageLoader } from '@/components/PageLoader'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/context/auth'
 import type { AccessLevel } from '@/types'
 
 export function ProtectedRoute({

@@ -21,8 +21,9 @@ export function AdminContent() {
   const [targets, setTargets] = useState<Record<string, TargetContent>>({})
   const [loading, setLoading] = useState(true)
 
+  // Also used to refresh after an action: no loading state, the list
+  // stays in place.
   async function load() {
-    setLoading(true)
     const { data } = await supabase
       .from('content_reports')
       .select('*')
@@ -51,6 +52,8 @@ export function AdminContent() {
   }
 
   useEffect(() => {
+    // False positive: the function awaits the server before any setState.
+    // oxlint-disable-next-line react/set-state-in-effect
     load()
   }, [])
 

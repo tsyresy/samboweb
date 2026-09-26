@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { UnpaidWall } from '@/components/UnpaidWall'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/context/auth'
 import { supabase } from '@/lib/supabase'
 
 interface AuthorInfo {
@@ -51,8 +51,9 @@ export function Discussions() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  // Also used to refresh after publishing: no loading state, the feed
+  // stays in place.
   async function loadPosts() {
-    setLoading(true)
     const [postsRes, authorsRes] = await Promise.all([
       supabase.from('posts').select('*').order('created_at', { ascending: false }),
       supabase.from('directory_profiles').select('id, last_name, first_names, nickname, photo_url'),
@@ -72,6 +73,8 @@ export function Discussions() {
   }
 
   useEffect(() => {
+    // False positive: the function awaits the server before any setState.
+    // oxlint-disable-next-line react/set-state-in-effect
     loadPosts()
   }, [])
 

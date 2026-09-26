@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { NewsCard } from '@/components/NewsCard'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/context/auth'
 import { NEWS_POSTS } from '@/data/news'
 import { fetchMyDuesTotal, formatAr, type DuesTotal } from '@/lib/dues'
 import { supabase } from '@/lib/supabase'

@@ -2,7 +2,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { PageLoader } from '@/components/PageLoader'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/context/auth'
 import { PresenceProvider } from '@/context/PresenceContext'
 
 interface NavItem {

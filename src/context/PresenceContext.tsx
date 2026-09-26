@@ -1,10 +1,8 @@
 import type { RealtimeChannel } from '@supabase/supabase-js'
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { useAuth } from '@/context/AuthContext'
+import { useEffect, useState, type ReactNode } from 'react'
+import { useAuth } from '@/context/auth'
+import { PresenceContext } from '@/context/presence'
 import { openChannel } from '@/lib/realtime'
-
-/** Profile ids of the members currently connected to the member space. */
-const PresenceContext = createContext<Set<string>>(new Set())
 
 /**
  * Joins a shared Realtime Presence channel for as long as the member is
@@ -47,8 +45,4 @@ export function PresenceProvider({ children }: { children: ReactNode }) {
   }, [profileId])
 
   return <PresenceContext.Provider value={online}>{children}</PresenceContext.Provider>
-}
-
-export function useOnlineMembers() {
-  return useContext(PresenceContext)
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { UNIVERSITY_ESTABLISHMENTS, STUDY_LEVELS } from '@/data/universities'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/context/auth'
 import { supabase } from '@/lib/supabase'
 import { uploadSignedPhoto } from '@/lib/cloudinary'
 import { CATEGORY_LABELS, VALIDATION_STATUS_LABELS } from '@/lib/membership'
@@ -36,9 +36,11 @@ export function Profile() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [photoError, setPhotoError] = useState('')
 
-  useEffect(() => {
-    if (!profile) return
-
+  // Fill the form once per profile, during render rather than in an
+  // effect (which would render the empty form first).
+  const [formProfileId, setFormProfileId] = useState<string | null>(null)
+  if (profile && formProfileId !== profile.id) {
+    setFormProfileId(profile.id)
     setForm({
       nickname: profile.nickname ?? '',
       phone: profile.phone ?? '',
@@ -53,17 +55,21 @@ export function Profile() {
       show_email_in_directory: profile.show_email_in_directory,
     })
     setPhotoUrl(profile.photo_url)
+  }
 
+  const profileId = profile?.id
+  useEffect(() => {
+    if (!profileId) return
     supabase
       .from('emergency_contacts')
       .select('contact_name, contact_phone')
-      .eq('profile_id', profile.id)
+      .eq('profile_id', profileId)
       .maybeSingle()
       .then(({ data }) => {
         if (data) setEmergency(data)
         setLoading(false)
       })
-  }, [profile])
+  }, [profileId])
 
   if (!profile || loading) {
     return <p className="text-ink-subtle">Chargement…</p>

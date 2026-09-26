@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { PaymentFrequencyChart } from '@/components/PaymentFrequencyChart'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@/context/auth'
 import {
   DEFAULT_DUES_AMOUNT,
   DUES_STATUS_LABELS,
@@ -40,11 +40,13 @@ export function Dues() {
   const [rules, setRules] = useState<RuleRow[]>([])
   const [records, setRecords] = useState<RecordRow[]>([])
   const [totalDue, setTotalDue] = useState<DuesTotal | null>(null)
-  const [loading, setLoading] = useState(true)
+  // Year whose data is on screen; anything else means it is still loading.
+  const [loadedYear, setLoadedYear] = useState<number | null>(null)
+  const loading = loadedYear !== year
 
   useEffect(() => {
     if (!profile) return
-    setLoading(true)
+    let cancelled = false
 
     Promise.all([
       supabase.from('dues_rules').select('month, category, amount, currency').eq('year', year),
@@ -55,11 +57,15 @@ export function Dues() {
         .eq('year', year),
       fetchMyDuesTotal(),
     ]).then(([rulesRes, recordsRes, total]) => {
+      if (cancelled) return
       setRules(rulesRes.data ?? [])
       setRecords(recordsRes.data ?? [])
       setTotalDue(total)
-      setLoading(false)
+      setLoadedYear(year)
     })
+    return () => {
+      cancelled = true
+    }
   }, [profile, year])
 
   // Mirrors the unpaid_dues_detail view (migration 0010): this year,

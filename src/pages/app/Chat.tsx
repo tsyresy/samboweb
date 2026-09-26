@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { UnpaidWall } from '@/components/UnpaidWall'
-import { useAuth } from '@/context/AuthContext'
-import { useOnlineMembers } from '@/context/PresenceContext'
+import { useAuth } from '@/context/auth'
+import { useOnlineMembers } from '@/context/presence'
 import { openChannel } from '@/lib/realtime'
 import { supabase } from '@/lib/supabase'
 

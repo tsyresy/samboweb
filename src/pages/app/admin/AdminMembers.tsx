@@ -51,10 +51,9 @@ export function AdminMembers() {
   const [statusFilter, setStatusFilter] = useState<ValidationStatus | 'tous'>('en_attente')
   const [search, setSearch] = useState('')
 
+  // Initial load and refresh after each action: the table stays in place
+  // (no loading state) so the admin keeps their scroll position.
   async function loadAll() {
-    setLoading(true)
-    setError('')
-
     const [profilesRes, positionsRes, assignmentsRes] = await Promise.all([
       supabase.from('profiles').select('*').order('created_at', { ascending: false }),
       supabase.from('office_positions').select('id, title').order('title'),
@@ -67,6 +66,7 @@ export function AdminMembers() {
       return
     }
 
+    setError('')
     setProfiles(profilesRes.data ?? [])
     setPositions(positionsRes.data ?? [])
     setAssignments(assignmentsRes.data ?? [])
@@ -74,6 +74,8 @@ export function AdminMembers() {
   }
 
   useEffect(() => {
+    // False positive: the function awaits the server before any setState.
+    // oxlint-disable-next-line react/set-state-in-effect
     loadAll()
   }, [])
 
