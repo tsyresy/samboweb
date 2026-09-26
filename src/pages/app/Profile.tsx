@@ -4,14 +4,7 @@ import { UNIVERSITY_ESTABLISHMENTS, STUDY_LEVELS } from '@/data/universities'
 import { useAuth } from '@/context/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { uploadSignedPhoto } from '@/lib/cloudinary'
-import { CATEGORY_LABELS } from '@/lib/membership'
-
-const STATUS_LABELS: Record<string, string> = {
-  en_attente: 'En attente de validation',
-  valide: 'Validé',
-  refuse: 'Refusé',
-  suspendu: 'Suspendu',
-}
+import { CATEGORY_LABELS, VALIDATION_STATUS_LABELS } from '@/lib/membership'
 
 interface EmergencyContact {
   contact_name: string
@@ -163,7 +156,7 @@ export function Profile() {
         </div>
         <div>
           <p className="text-sambo-700/60">Statut</p>
-          <p className="font-medium text-sambo-950">{STATUS_LABELS[profile.status]}</p>
+          <p className="font-medium text-sambo-950">{VALIDATION_STATUS_LABELS[profile.status]}</p>
         </div>
       </div>
 

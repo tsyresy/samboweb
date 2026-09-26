@@ -101,6 +101,7 @@ export function AppLayout() {
       ? [{ to: '/app/administration/adidy', label: 'Gestion des adidy' }]
       : []),
     ...(isAdmin ? [{ to: '/app/administration/contenu', label: 'Contenus et messages' }] : []),
+    ...(isAdmin ? [{ to: '/app/administration/journal', label: "Journal d'audit" }] : []),
   ]
 
   return (

@@ -492,9 +492,63 @@ Fait :
 - Vérifier sur les vraies données : passer un membre à « Payé » → la date
   du jour apparaît dans « Date de paiement » et une barre s'ajoute au
   graphique de `/app/adidy` (testé jusqu'ici avec données simulées).
-- Exports de l'écran `/app/administration/adidy` (toujours pas faits).
+- ~~Exports de l'écran `/app/administration/adidy`~~ → fait le 2026-09-26.
 - Appel vidéo de groupe du Chat (bouton présent mais désactivé, prévu pour
   l'application mobile).
+
+## Solidification — 2026-09-26
+
+- **Découpage du bundle** : l'espace membre, l'inscription et la
+  vérification de carte sont chargés à la demande (`React.lazy`). JS initial
+  623 kB → 282 kB (+ 213 kB Supabase, nécessaire dès le départ pour la
+  session) ; plus d'avertissement de taille au build. Après un déploiement,
+  un onglet resté ouvert qui réclame un morceau disparu recharge la page une
+  fois (`vite:preloadError`) au lieu d'afficher une page blanche.
+- **Libellés centralisés** : catégories, statuts de validation, niveaux
+  d'accès (`src/lib/membership.ts`), mois et statuts d'adidy
+  (`src/lib/dues.ts`) — les catégories étaient recopiées dans 5 fichiers.
+  La page publique `/verifier` ne charge plus la librairie QR code.
+- **Exports CSV de `/app/administration/adidy`** : « Exporter le mois »
+  (statut, montant dû, payé, date, mode, référence) et « Récapitulatif
+  de l'année » (un statut par mois et par membre, mois payés, total payé).
+  Séparateur `;` + BOM UTF-8 pour Excel en français ; une cellule qui
+  commence par `=`, `+`, `-` ou `@` est neutralisée (injection de formule
+  via un nom saisi par un membre).
+- **Bugs corrigés dans l'écran admin des adidy** :
+  - chaque enregistrement remplaçait tout le tableau par « Chargement… »
+    → focus perdu à chaque Tab pendant la saisie ; rechargement désormais
+    silencieux ;
+  - parcourir les champs au clavier **créait une ligne `dues_records`
+    pour chaque membre traversé**, même sans modification → on n'écrit
+    plus que si la valeur change ;
+  - erreurs d'enregistrement du montant du mois ignorées en silence, et
+    montant négatif refusé sans message → affichées ;
+  - réponse d'une requête ancienne (changement de mois rapide) ignorée.
+- **Journal d'audit** (migration `0012`, page
+  `/app/administration/journal`, administrateurs) :
+  - **faille corrigée** : le trigger d'audit des paiements ne couvrait que
+    `UPDATE`, or l'écran admin enregistre par upsert → la **première
+    saisie d'un paiement n'était jamais journalisée**, seulement les
+    corrections. Couvre maintenant `INSERT`, plus la date de paiement et
+    la note ; chaque entrée garde son contexte (membre, année, mois).
+  - les montants mensuels (`dues_rules`) sont journalisés : création,
+    modification, suppression (retour au défaut).
+  - la page affiche qui a fait quoi et quand, en français (« Admin a
+    enregistré l'adidy de septembre 2026 de Rakoto Jean — Statut : — →
+    Payé »), filtres Membres / Paiements / Montants, pagination par 50.
+    Les entrées antérieures à `0012` (sans contexte) sont complétées en
+    relisant la ligne de paiement.
+  - Migration testée sur PGlite avec les 12 migrations enchaînées ; page
+    testée en navigateur (desktop + 390 px) avec Supabase simulé.
+
+À faire :
+- **Appliquer `supabase/migrations/0012_audit_adidy_complet.sql`** dans
+  Supabase → SQL Editor (la page du journal fonctionne sans, mais les
+  premières saisies de paiement ne seront tracées qu'après).
+- Vérifier sur les vraies données : exports CSV ouverts dans Excel /
+  LibreOffice, et une saisie de paiement visible dans le journal.
+- Avertissements restants de l'analyse statique (`oxlint`, 7) :
+  `setState` dans des effets de chargement — sans bug constaté.
 
 ## Phase 5 — Paiements ⏳ (pas commencée)
 

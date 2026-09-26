@@ -14,6 +14,7 @@ import { RegisterConfirmation } from '@/pages/RegisterConfirmation'
 
 // Espace membre, inscription et vérification de carte : chargés à la demande
 // pour que les visiteurs des pages publiques ne téléchargent pas tout le code.
+const AdminAudit = lazy(() => import('@/pages/app/admin/AdminAudit').then((m) => ({ default: m.AdminAudit })))
 const AdminContent = lazy(() => import('@/pages/app/admin/AdminContent').then((m) => ({ default: m.AdminContent })))
 const AdminDues = lazy(() => import('@/pages/app/admin/AdminDues').then((m) => ({ default: m.AdminDues })))
 const AdminMembers = lazy(() => import('@/pages/app/admin/AdminMembers').then((m) => ({ default: m.AdminMembers })))
@@ -84,6 +85,14 @@ function App() {
             element={
               <ProtectedRoute requireAccessLevel="administrateur">
                 <AdminContent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="administration/journal"
+            element={
+              <ProtectedRoute requireAccessLevel="administrateur">
+                <AdminAudit />
               </ProtectedRoute>
             }
           />
